@@ -28,7 +28,7 @@
     "format:fix": "turbo run format:fix",
     "typecheck": "turbo run typecheck",
     "start": "turbo run start",
-    "test": "turbo run test",
+    "test": "pnpm run security:check && turbo run test",
     "changelog:check": "turbo run changelog:check --filter=magic-modal",
     "release:check": "turbo run release:check --filter=magic-modal",
     "build": "turbo run build",
@@ -38,6 +38,7 @@
     "registry:build": "shadcn build --output apps/docs/public/r && pnpm --filter @magic-modal/docs exec oxfmt public/r",
     "registry:check": "shadcn registry validate && pnpm registry:typecheck && pnpm registry:build",
     "registry:typecheck": "pnpm --filter magic-modal exec tsc --project ../../registry/tsconfig.json",
+    "security:check": "node tools/security-check.mjs && pnpm audit",
     "doctor": "turbo run doctor"
   },
   "config": {
