@@ -17,6 +17,9 @@ overrides:
   "brace-expansion": "^5.0.9"
   "fast-uri": "^3.1.5"
   "hono": "^4.12.34"
+  "js-yaml@3.15.0": "3.15.1"
+  "js-yaml@4.3.0": "4.3.1"
+  "nanoid@3.3.16": "3.3.17"
   "uuid": "^14.0.0"
   # Both of these reach us through next in apps/docs, and bumping next fixes
   # neither. It pins `"postcss": "8.4.31"` exactly and takes `sharp: "^0.34.5"`
@@ -33,6 +36,7 @@ overrides:
   "sharp": "^0.35.3"
 
 patchedDependencies:
+  image-size@1.2.1: patches/image-size@1.2.1.patch
   "minimatch@3.1.5": "patches/minimatch@3.1.5.patch"
 
 # pnpm 11 renamed `onlyBuiltDependencies` to `allowBuilds`, which is a map so a
@@ -241,6 +245,16 @@ minimumReleaseAgeExclude:
   - "brace-expansion@5.0.9" # GHSA-rgw5-rvv9-x895
   - "fast-uri@3.1.5" # GHSA-7p8r-x3mc-p8w7
   - "hono@4.12.34" # GHSA-8j4g-w8fx-2239
+  - "js-yaml@3.15.1" # GHSA-5p4m-2wfm-xmqj
+  - "js-yaml@4.3.1" # GHSA-5p4m-2wfm-xmqj
+  - "nanoid@3.3.17" # GHSA-2v37-7h3g-55p8
   # Our own plugin, published from this account 2026-07-27 — same first-party
   # exemption the sibling repos carry. Version-pinned like the rest.
   - "eslint-plugin-safe-jsx@1.3.0"
+
+auditConfig:
+  # image-size has no published fix. The patch above covers both parser
+  # advisories, and tools/security-check.mjs exercises each malformed format.
+  ignoreGhsas:
+    - GHSA-w3rx-r6r6-pgpr
+    - GHSA-5p2g-fcmc-qvqq
