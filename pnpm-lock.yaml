@@ -15,7 +15,7 @@ overrides:
   brace-expansion: ^5.0.9
   fast-uri: ^3.1.5
   hono: ^4.12.34
-  js-yaml@3.15.0: 3.15.1
+  js-yaml@3.15.0: 5.2.2
   js-yaml@4.3.0: 4.3.1
   nanoid@3.3.16: 3.3.17
   uuid: ^14.0.0
@@ -4292,9 +4292,6 @@ packages:
   arg@5.0.2:
     resolution: {integrity: sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==}
 
-  argparse@1.0.10:
-    resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
-
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
@@ -6583,12 +6580,12 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@3.15.1:
-    resolution: {integrity: sha512-S99WuO3HlhO3XN41EtYUNl9zzXjoJx7QvmipxsJVxtCBT0YHEFy+iOJhjSvrmV12nYhWpZaM8lPHkJm0yUMbag==}
-    hasBin: true
-
   js-yaml@4.3.1:
     resolution: {integrity: sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==}
+    hasBin: true
+
+  js-yaml@5.2.2:
+    resolution: {integrity: sha512-dayzUzKkJ1MkuUtZglSebU43utNXH0OWQByK9rKOOuYIO8M5TV1y+n8ALMdG0rdzBnfNkOmZEqrURepb0ejqBw==}
     hasBin: true
 
   jsc-safe-url@0.2.4:
@@ -8505,9 +8502,6 @@ packages:
   split-on-first@1.1.0:
     resolution: {integrity: sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw==}
     engines: {node: '>=6'}
-
-  sprintf-js@1.0.3:
-    resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
   stack-generator@2.0.10:
     resolution: {integrity: sha512-mwnua/hkqM6pF4k8SnmZ2zfETsRUpWXREfA/goT8SLCV4iOFa4bzOX2nDipWAZFPTjLvQB82f5yaodMVhK0yJQ==}
@@ -10960,7 +10954,7 @@ snapshots:
       camelcase: 5.3.1
       find-up: 4.1.0
       get-package-type: 0.1.0
-      js-yaml: 3.15.1
+      js-yaml: 5.2.2
       resolve-from: 5.0.0
 
   '@istanbuljs/schema@0.1.6': {}
@@ -13338,10 +13332,6 @@ snapshots:
   arg@4.1.3: {}
 
   arg@5.0.2: {}
-
-  argparse@1.0.10:
-    dependencies:
-      sprintf-js: 1.0.3
 
   argparse@2.0.1: {}
 
@@ -16086,12 +16076,11 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-yaml@3.15.1:
-    dependencies:
-      argparse: 1.0.10
-      esprima: 4.0.1
-
   js-yaml@4.3.1:
+    dependencies:
+      argparse: 2.0.1
+
+  js-yaml@5.2.2:
     dependencies:
       argparse: 2.0.1
 
@@ -18613,8 +18602,6 @@ snapshots:
   space-separated-tokens@2.0.2: {}
 
   split-on-first@1.1.0: {}
-
-  sprintf-js@1.0.3: {}
 
   stack-generator@2.0.10:
     dependencies:
