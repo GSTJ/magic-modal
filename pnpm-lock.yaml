@@ -55,8 +55,8 @@ importers:
         specifier: 19.2.0
         version: 19.2.0(react@19.2.0)
       remotion:
-        specifier: 4.0.503
-        version: 4.0.503(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: 4.0.505
+        version: 4.0.505(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
     devDependencies:
       '@types/react':
         specifier: ^19.2.18
@@ -4074,10 +4074,12 @@ packages:
   '@xmldom/xmldom@0.8.13':
     resolution: {integrity: sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xmldom/xmldom@0.9.10':
     resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
     engines: {node: '>=14.6'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -8142,6 +8144,12 @@ packages:
 
   remotion@4.0.503:
     resolution: {integrity: sha512-j/oYKlTe9gvYLQVsBeVhG6y4aIi9brL4AV4v/101A9e/QW4ESjpbnqdwdKUc0VWcU/bNlqsvbsfUBgnP/XnHdw==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  remotion@4.0.505:
+    resolution: {integrity: sha512-Lhi03pimw+Tcer2C0iioJD3c5Iy5hmRJRHtR9XvObhKl0Z4Lpi/EDeTFq1tvU9VVeezU75tVlHYeq+S3TDIiPw==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -18125,6 +18133,11 @@ snapshots:
       - supports-color
 
   remotion@4.0.503(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+    dependencies:
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+
+  remotion@4.0.505(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
