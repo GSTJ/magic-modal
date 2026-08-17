@@ -53,6 +53,24 @@ minimumReleaseAge: 20160
 
 minimumReleaseAgeExclude:
   - "magic-*"
+  # Expo SDK 55's live compatibility map moved on 2026-08-17. Its dependency
+  # closure contains these fresh releases. Remove them after 2026-08-31.
+  - "@expo/cli@55.0.35"
+  - "@expo/config@55.0.20"
+  - "@expo/image-utils@0.8.16"
+  - "@expo/metro-config@55.0.26"
+  - "@expo/prebuild-config@55.0.21"
+  - "@expo/require-utils@55.0.7"
+  - "@expo/router-server@55.0.19"
+  - "expo@55.0.29"
+  - "expo-asset@55.0.19"
+  - "expo-file-system@55.0.25"
+  - "expo-linking@55.0.17"
+  - "expo-modules-autolinking@55.0.26"
+  - "expo-router@55.0.18"
+  - "expo-server@55.0.12"
+  - "expo-splash-screen@55.0.24"
+  - "multitars@1.0.2"
   # Exact versions already locked before the 14-day quarantine was introduced.
   # They stop bypassing the policy as soon as the lockfile moves past them.
   - "@babel/generator@7.29.8"
