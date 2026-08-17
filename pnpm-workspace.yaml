@@ -11,6 +11,8 @@ overrides:
   "metro-resolver": "^0.83.3"
   "metro-config": "^0.83.3"
   "@expo/metro-runtime": "55.0.12"
+  "@xmldom/xmldom@0.8.13": "0.8.14"
+  "@xmldom/xmldom@0.9.10": "0.9.11"
   "undici": "^8.0.0"
   "lodash": "^4.18.0"
   "tmp": "^0.2.6"
@@ -53,6 +55,9 @@ minimumReleaseAge: 20160
 
 minimumReleaseAgeExclude:
   - "magic-*"
+  # Security fixes published inside the quarantine window.
+  - "@xmldom/xmldom@0.8.14"
+  - "@xmldom/xmldom@0.9.11"
   # Exact versions already locked before the 14-day quarantine was introduced.
   # They stop bypassing the policy as soon as the lockfile moves past them.
   - "@babel/generator@7.29.8"
