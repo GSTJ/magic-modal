@@ -89,8 +89,8 @@ importers:
         specifier: 16.14.0
         version: 16.14.0(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.28.0(react@19.2.0))(next@16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
       fumadocs-mdx:
-        specifier: 15.2.1
-        version: 15.2.1(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.0(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.28.0(react@19.2.0))(next@16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)
+        specifier: 15.2.2
+        version: 15.2.2(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.0(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.28.0(react@19.2.0))(next@16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)
       fumadocs-typescript:
         specifier: 5.3.0
         version: 5.3.0(7b1e4789e3ffae12b02ca2f14c8a061b)
@@ -5797,8 +5797,8 @@ packages:
       zod:
         optional: true
 
-  fumadocs-mdx@15.2.1:
-    resolution: {integrity: sha512-lyx35MAFAj9yuLPudNoRGGvauZlT1xRLLw17P0jnvhXikrJNC8mAeg/4WIity5K+3V6ZetBQ2PYIcnli450vMg==}
+  fumadocs-mdx@15.2.2:
+    resolution: {integrity: sha512-cWtGFSDSWOTykuxym3uzfuIkK9oWyNcAeIWgjqfS1QbkrY9nAh9fmoPCFwMcw7alk5oX5l8sxvRsUG+ZTuShNQ==}
     hasBin: true
     peerDependencies:
       '@fumadocs/satteri': 0.x.x
@@ -15025,7 +15025,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-mdx@15.2.1(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.0(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.28.0(react@19.2.0))(next@16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(supports-color@8.1.1):
+  fumadocs-mdx@15.2.2(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.0(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.28.0(react@19.2.0))(next@16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(supports-color@8.1.1):
     dependencies:
       '@mdx-js/mdx': 3.1.1(supports-color@8.1.1)
       '@standard-schema/spec': 1.1.0
