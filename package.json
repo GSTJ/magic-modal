@@ -1,7 +1,7 @@
 {
   "name": "magic",
   "version": "0.0.0",
-  "packageManager": "pnpm@11.19.0",
+  "packageManager": "pnpm@11.20.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GSTJ/magic-modal.git"
