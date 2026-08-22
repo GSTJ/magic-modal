@@ -46,8 +46,8 @@ importers:
         specifier: 4.0.503
         version: 4.0.503(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/helpers@0.5.23)(clean-css@5.3.3)(lightningcss@1.32.0)(postcss@8.5.25)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(typescript@5.9.3)(uglify-js@3.19.3)
       '@remotion/fonts':
-        specifier: 4.0.503
-        version: 4.0.503(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: 4.0.507
+        version: 4.0.507(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -1304,9 +1304,6 @@ packages:
   '@expo/config-types@55.0.6':
     resolution: {integrity: sha512-S+GJKYoIjnWlert/9vXuTohaTsMbyOLSVxdIgPgoq3P4N1p4CWrfyZLnz6qRug8wYSO5fcYcS9mFleyEP8wRLg==}
 
-  '@expo/config@55.0.19':
-    resolution: {integrity: sha512-MahrCR6LsElK/1r/C/zfEZ5Pdgmo88Gtd4CCnASv/rC2pUIB+ENt2oKRHAPIWi7McTeoqDPb9KwCkQBpNMOjrg==}
-
   '@expo/config@55.0.20':
     resolution: {integrity: sha512-TnJEOtdHCin2rZ/OVEGo0fuT+CWz0VqhyGWz+zsARvKP45aP8LFQMzeHuWmOpfm7XLJcsMen7Y5gO+xkzcRXkg==}
 
@@ -1402,14 +1399,6 @@ packages:
     resolution: {integrity: sha512-3OVPlg/iufrJ7dYjNwDwOXR2qX0h348xdPQTRuMfKVtcPlqpAH9fgz6CiSPKykGHyUanwgJRWiB7+XBjzzl6dg==}
     peerDependencies:
       expo: '*'
-
-  '@expo/require-utils@55.0.6':
-    resolution: {integrity: sha512-IqsRGPdGbF0lAIrg3XQ+GzcITYcsskvIRmFAjw2kBnr8RgSrRhFAJY1bKksukEUsuZy0knhTCVIIUce7hocqeA==}
-    peerDependencies:
-      typescript: ^5.0.0 || ^5.0.0-0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
 
   '@expo/require-utils@55.0.7':
     resolution: {integrity: sha512-nkgOCNeWIVfLy3B+THeuqMGNKo0x6jBit9ofE09pHL7XHSkWcEnIYRCLgks8E3wj9q3ylcF1BQLrTxGhPja7iA==}
@@ -3192,8 +3181,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@remotion/fonts@4.0.503':
-    resolution: {integrity: sha512-UvQquQ84Yp5kipB2QnXdJtuJBdMD9BClHGt2TWd9vWk6uaYm3aXg449gcM3XBpjCewgl4CR1trh9+nWr6RSyHQ==}
+  '@remotion/fonts@4.0.507':
+    resolution: {integrity: sha512-n0FV8lkTzNQ8bU5vK5Ga83ru23DWfJss2DuepabRwdnmnYZnNXXd9lr1EVjhmGHd8pk+IFTaLfKBeNjshe89GA==}
 
   '@remotion/licensing@4.0.503':
     resolution: {integrity: sha512-2au285LmzXpZwmUCbrj3k4gkCMk9GKBh4BlskP4nkE1PIvau77Vli3J6imTf5lMX+esHAVEyQw16e5RDwwWsiA==}
@@ -5301,6 +5290,7 @@ packages:
   eslint@9.39.5:
     resolution: {integrity: sha512-DgZS62aPLXKlnxILS/AYCoRvHaZeXceIzlXPkkGGzJWSow1aEk0lbTlxUSlyjC8jcaKxAdOnTDz+o1JFSBsyjw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -8164,6 +8154,12 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
+  remotion@4.0.507:
+    resolution: {integrity: sha512-g/NrnRZKJyh0isE+/0sIxKlgJl6BH5v/CJ35W4TGYR1obQZf60fHkf9CGxSBHJEw27dG1PJCgKT75YGfoCZ7tg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -10393,22 +10389,6 @@ snapshots:
 
   '@expo/config-types@55.0.6': {}
 
-  '@expo/config@55.0.19(supports-color@8.1.1)(typescript@5.9.3)':
-    dependencies:
-      '@expo/config-plugins': 55.0.11(supports-color@8.1.1)
-      '@expo/config-types': 55.0.6
-      '@expo/json-file': 10.2.0
-      '@expo/require-utils': 55.0.6(supports-color@8.1.1)(typescript@5.9.3)
-      deepmerge: 4.3.1
-      getenv: 2.0.0
-      glob: 13.0.6
-      resolve-workspace-root: 2.0.1
-      semver: 7.8.5
-      slugify: 1.6.9
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-
   '@expo/config@55.0.20(supports-color@8.1.1)(typescript@5.9.3)':
     dependencies:
       '@expo/config-plugins': 55.0.11(supports-color@8.1.1)
@@ -10507,7 +10487,7 @@ snapshots:
 
   '@expo/local-build-cache-provider@55.0.15(supports-color@8.1.1)(typescript@5.9.3)':
     dependencies:
-      '@expo/config': 55.0.19(supports-color@8.1.1)(typescript@5.9.3)
+      '@expo/config': 55.0.20(supports-color@8.1.1)(typescript@5.9.3)
       chalk: 4.1.2
     transitivePeerDependencies:
       - supports-color
@@ -10622,16 +10602,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
-
-  '@expo/require-utils@55.0.6(supports-color@8.1.1)(typescript@5.9.3)':
-    dependencies:
-      '@babel/code-frame': 7.29.7
-      '@babel/core': 7.29.7(supports-color@8.1.1)
-      '@babel/plugin-transform-modules-commonjs': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
-    optionalDependencies:
-      typescript: 5.9.3
-    transitivePeerDependencies:
-      - supports-color
 
   '@expo/require-utils@55.0.7(supports-color@8.1.1)(typescript@5.9.3)':
     dependencies:
@@ -12311,9 +12281,9 @@ snapshots:
   '@remotion/compositor-win32-x64-msvc@4.0.503':
     optional: true
 
-  '@remotion/fonts@4.0.503(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@remotion/fonts@4.0.507(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
-      remotion: 4.0.503(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      remotion: 4.0.507(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
     transitivePeerDependencies:
       - react
       - react-dom
@@ -18172,6 +18142,11 @@ snapshots:
       - supports-color
 
   remotion@4.0.503(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+    dependencies:
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+
+  remotion@4.0.507(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
