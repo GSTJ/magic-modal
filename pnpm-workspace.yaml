@@ -7,9 +7,9 @@ nodeLinker: hoisted
 dedupeDirectDeps: true
 
 overrides:
-  "metro": "^0.83.3"
-  "metro-resolver": "^0.83.3"
-  "metro-config": "^0.83.3"
+  "metro": "^0.83.8"
+  "metro-resolver": "^0.83.8"
+  "metro-config": "^0.83.8"
   "@expo/metro-runtime": "55.0.12"
   "undici": "^8.0.0"
   "lodash": "^4.18.0"
@@ -36,7 +36,6 @@ overrides:
   "sharp": "^0.35.3"
 
 patchedDependencies:
-  image-size@1.2.1: patches/image-size@1.2.1.patch
   "minimatch@3.1.5": "patches/minimatch@3.1.5.patch"
 
 # pnpm 11 renamed `onlyBuiltDependencies` to `allowBuilds`, which is a map so a
@@ -55,22 +54,42 @@ minimumReleaseAgeExclude:
   - "magic-*"
   # Expo SDK 55's live compatibility map moved on 2026-08-17. Its dependency
   # closure contains these fresh releases. Remove them after 2026-08-31.
-  - "@expo/cli@55.0.35"
-  - "@expo/config@55.0.20"
-  - "@expo/image-utils@0.8.16"
-  - "@expo/metro-config@55.0.26"
-  - "@expo/prebuild-config@55.0.21"
-  - "@expo/require-utils@55.0.7"
   - "@expo/router-server@55.0.19"
-  - "expo@55.0.29"
-  - "expo-asset@55.0.19"
-  - "expo-file-system@55.0.25"
   - "expo-linking@55.0.17"
-  - "expo-modules-autolinking@55.0.26"
   - "expo-router@55.0.18"
   - "expo-server@55.0.12"
-  - "expo-splash-screen@55.0.24"
   - "multitars@1.0.2"
+  # Expo's SDK 55 compatibility map moved again on 2026-08-25. Its dependency
+  # closure contains these fresh releases. Remove them after 2026-09-09.
+  - "@expo/cli@55.0.36"
+  - "@expo/config@55.0.21"
+  - "@expo/image-utils@0.8.17"
+  - "@expo/local-build-cache-provider@55.0.16"
+  - "@expo/metro@55.1.2"
+  - "@expo/metro-config@55.0.27"
+  - "@expo/prebuild-config@55.0.22"
+  - "@expo/require-utils@55.0.8"
+  - "babel-preset-expo@55.0.25"
+  - "expo@55.0.30"
+  - "expo-asset@55.0.20"
+  - "expo-file-system@55.0.26"
+  - "expo-modules-autolinking@55.0.27"
+  - "expo-splash-screen@55.0.25"
+  - "metro-babel-transformer@0.83.8"
+  - "metro-cache-key@0.83.8"
+  - "metro-cache@0.83.8"
+  - "metro-core@0.83.8"
+  - "metro-file-map@0.83.8"
+  - "metro-minify-terser@0.83.8"
+  - "metro@0.83.8"
+  - "metro-config@0.83.8"
+  - "metro-resolver@0.83.8"
+  - "metro-runtime@0.83.8"
+  - "metro-source-map@0.83.8"
+  - "metro-symbolicate@0.83.8"
+  - "metro-transform-plugins@0.83.8"
+  - "metro-transform-worker@0.83.8"
+  - "ob1@0.83.8"
   # Exact versions already locked before the 14-day quarantine was introduced.
   # They stop bypassing the policy as soon as the lockfile moves past them.
   - "@babel/generator@7.29.8"
@@ -269,10 +288,3 @@ minimumReleaseAgeExclude:
   # Our own plugin, published from this account 2026-07-27 — same first-party
   # exemption the sibling repos carry. Version-pinned like the rest.
   - "eslint-plugin-safe-jsx@1.3.0"
-
-auditConfig:
-  # image-size has no published fix. The patch above covers both parser
-  # advisories, and tools/security-check.mjs exercises each malformed format.
-  ignoreGhsas:
-    - GHSA-w3rx-r6r6-pgpr
-    - GHSA-5p2g-fcmc-qvqq

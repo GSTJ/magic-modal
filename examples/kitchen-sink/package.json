@@ -18,11 +18,11 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.12",
-    "expo": "^55.0.28",
+    "expo": "^55.0.30",
     "expo-constants": "~55.0.17",
     "expo-linking": "~55.0.16",
     "expo-router": "~55.0.17",
-    "expo-splash-screen": "~55.0.23",
+    "expo-splash-screen": "~55.0.25",
     "expo-status-bar": "~55.0.6",
     "magic-modal": "workspace:*",
     "react": "19.2.0",
