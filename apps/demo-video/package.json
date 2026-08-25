@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@remotion/cli": "4.0.507",
-    "@remotion/fonts": "4.0.507",
+    "@remotion/fonts": "4.0.508",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "remotion": "4.0.507"
