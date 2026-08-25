@@ -40,6 +40,13 @@
       "rangeStrategy": "bump"
     },
     {
+      "description": "Remotion requires every remotion and @remotion package in an app to use the same exact version. Keep the demo video's runtime, CLI, and plugins in one update.",
+      "matchFileNames": ["apps/demo-video/package.json"],
+      "matchPackageNames": ["remotion", "@remotion/**"],
+      "groupName": "remotion",
+      "rangeStrategy": "pin"
+    },
+    {
       "description": "Reanimated and Worklets version-gate each other at runtime and the Expo SDK picks the pair. The file rule above only reaches examples/kitchen-sink, so Renovate kept proposing these on the packages/modal side alone: #306 took reanimated 4.5.3 there, which installed a second copy beside the example app's 4.2.3 and asserted on its `react-native-worklets: 0.10.x - 0.11.x` peer against the SDK's 0.7.4, failing three of four suites. Moving Worklets up to 0.10.3 to match instead fails expo-doctor on the SDK mismatch, since Worklets is not on the example app's expo.install.exclude list. react-native-screens sits in the same position and is held for the same reason. Moves by hand with the SDK.",
       "matchPackageNames": [
         "react-native-reanimated",
