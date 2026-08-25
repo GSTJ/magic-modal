@@ -11,6 +11,8 @@ overrides:
   "metro-resolver": "^0.83.8"
   "metro-config": "^0.83.8"
   "@expo/metro-runtime": "55.0.12"
+  "@xmldom/xmldom@0.8.13": "0.8.15"
+  "@xmldom/xmldom@0.9.10": "0.9.12"
   "undici": "^8.0.0"
   "lodash": "^4.18.0"
   "tmp": "^0.2.6"
@@ -52,6 +54,10 @@ minimumReleaseAge: 20160
 
 minimumReleaseAgeExclude:
   - "magic-*"
+  # Security fixes published inside the quarantine window. Remove them after
+  # 2026-09-04.
+  - "@xmldom/xmldom@0.8.15"
+  - "@xmldom/xmldom@0.9.12"
   # Expo SDK 55's live compatibility map moved on 2026-08-17. Its dependency
   # closure contains these fresh releases. Remove them after 2026-08-31.
   - "@expo/router-server@55.0.19"
