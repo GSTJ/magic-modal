@@ -35,8 +35,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.6
       shadcn:
-        specifier: 4.16.2
-        version: 4.16.2(supports-color@8.1.1)(typescript@5.9.3)
+        specifier: 4.17.0
+        version: 4.17.0(supports-color@8.1.1)(typescript@5.9.3)
       turbo:
         specifier: ^2.5.4
         version: 2.10.9
@@ -8697,8 +8697,8 @@ packages:
     resolution: {integrity: sha512-TPbeg0b7ylrswdGCji8FRGFAKuqbpQlLbL8SOle3j1iHSs5Ob5mhvMAxWN2UItOjgALAB5Zp3fmMfj8mbWvXKw==}
     engines: {node: '>=10'}
 
-  shadcn@4.16.2:
-    resolution: {integrity: sha512-M1AvZKFWcCzWRDoyApIqJMSLIpY8Ev4uBGuiPLSFmiTbixXhPmzotSTvLzFmBrfoIxG9aIg2dZOETblEaXGUnQ==}
+  shadcn@4.17.0:
+    resolution: {integrity: sha512-kphndh72CD7mxLQ/thkbPVgfXpIjzPUllzvTWRJmU3sNGZc/WbOqzJ0FXbBGj6sqNiaGPiOLDQByy8FAtCuVUQ==}
     engines: {node: '>=20.18.1'}
     hasBin: true
 
@@ -18959,7 +18959,7 @@ snapshots:
 
   sf-symbols-typescript@2.2.0: {}
 
-  shadcn@4.16.2(supports-color@8.1.1)(typescript@5.9.3):
+  shadcn@4.17.0(supports-color@8.1.1)(typescript@5.9.3):
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/parser': 7.29.8
@@ -18985,6 +18985,7 @@ snapshots:
       postcss-selector-parser: 7.1.4
       prompts: 2.4.2
       recast: 0.23.12
+      socks: 2.8.9
       stringify-object: 5.0.0
       tailwind-merge: 3.6.0
       ts-morph: 26.0.0
