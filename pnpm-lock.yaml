@@ -35,8 +35,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.6
       shadcn:
-        specifier: 4.17.0
-        version: 4.17.0(supports-color@8.1.1)(typescript@5.9.3)
+        specifier: 4.18.0
+        version: 4.18.0(supports-color@8.1.1)(typescript@5.9.3)
       turbo:
         specifier: ^2.5.4
         version: 2.10.9
@@ -8697,8 +8697,8 @@ packages:
     resolution: {integrity: sha512-TPbeg0b7ylrswdGCji8FRGFAKuqbpQlLbL8SOle3j1iHSs5Ob5mhvMAxWN2UItOjgALAB5Zp3fmMfj8mbWvXKw==}
     engines: {node: '>=10'}
 
-  shadcn@4.17.0:
-    resolution: {integrity: sha512-kphndh72CD7mxLQ/thkbPVgfXpIjzPUllzvTWRJmU3sNGZc/WbOqzJ0FXbBGj6sqNiaGPiOLDQByy8FAtCuVUQ==}
+  shadcn@4.18.0:
+    resolution: {integrity: sha512-tUFZgkYmfVNQVm3xX7lhSzOvDsp+O14ac5dwgXIr5mIsr79ISueb/Mu+ZtWMz0DH6v77u4eYyvbQ9TTMpSn3aw==}
     engines: {node: '>=20.18.1'}
     hasBin: true
 
@@ -18959,7 +18959,7 @@ snapshots:
 
   sf-symbols-typescript@2.2.0: {}
 
-  shadcn@4.17.0(supports-color@8.1.1)(typescript@5.9.3):
+  shadcn@4.18.0(supports-color@8.1.1)(typescript@5.9.3):
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/parser': 7.29.8
