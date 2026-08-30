@@ -8,9 +8,9 @@ import { publicPaths, site } from "@/lib/site";
 
 import "./home.css";
 
-const title = "Modals you can await | Magic Modal";
+const title = "Modals you can await with Magic Modal v10";
 const description =
-  "Open a modal from any async flow, await its typed result, and keep concurrent prompts in one ordered stack across web, iOS, and Android.";
+  "Await typed modal results from any async flow. One portal keeps concurrent prompts ordered across native and the web.";
 const socialImage = publicPaths.url("/og.png");
 
 export const metadata: Metadata = {

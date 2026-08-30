@@ -53,7 +53,7 @@ export default function HomePage() {
           </code>
         </Link>
         <nav aria-label="Main navigation">
-          <a href="#story">Story</a>
+          <a href="#v10">v10</a>
           <Link href="/docs/getting-started/setup">Setup</Link>
           <Link href="/docs/reference">API</Link>
           <a
@@ -73,17 +73,17 @@ export default function HomePage() {
         <div className="mm-hero-copy">
           <p className="mm-overline">
             <MagicMark size={24} />
-            One API for web, iOS, and Android
+            v10 for native and the web
           </p>
           <h1>Modals you can await</h1>
           <p className="mm-hero-lede">
-            Mount one <code>MagicModalPortal</code> at the root of your app.
-            Call <code>show()</code> from any async flow and await the typed
-            result on web, iOS, and Android.
+            For React teams shipping modal flows on native and the web. Mount
+            one <code>MagicModalPortal</code>, call <code>show()</code> from any
+            async flow, and await the typed result.
           </p>
           <div className="mm-hero-actions">
             <a className="mm-run-link" href="#original-flow">
-              Try the rating flow
+              Try the live demo
               <ArrowRight aria-hidden="true" size={17} />
             </a>
             <a
@@ -103,11 +103,11 @@ export default function HomePage() {
         <OriginFlow />
 
         <a
-          aria-label="Continue to the origin story"
+          aria-label="Continue to the v10 release"
           className="mm-scroll-cue"
-          href="#request"
+          href="#v10"
         >
-          <span>Why it exists</span>
+          <span>Why v10</span>
           <ArrowDown aria-hidden="true" size={15} />
         </a>
       </section>
@@ -160,6 +160,64 @@ export default function HomePage() {
           <ArrowUpRight aria-hidden="true" size={14} />
         </a>
       </aside>
+
+      <section className="mm-v10" id="v10">
+        <div className="mm-v10-copy" data-reveal>
+          <h2>Magic Modal v10 ships one package for native and the web</h2>
+          <p>
+            The v10 browser runtime uses standard HTML and CSS, so the package
+            moved from <code>react-native-magic-modal</code> to{" "}
+            <code>magic-modal</code>. Expo and React Native keep the native
+            runtime.
+          </p>
+          <div className="mm-v10-actions">
+            <Link href="/docs/getting-started/installation">
+              Move to magic-modal
+              <ArrowRight aria-hidden="true" size={15} />
+            </Link>
+            <a
+              href="https://github.com/GSTJ/magic-modal/releases/tag/magic-modal-10.0.0"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Read the v10 release
+              <ArrowUpRight aria-hidden="true" size={14} />
+            </a>
+          </div>
+        </div>
+
+        <dl className="mm-v10-ledger" data-reveal>
+          <div className="mm-v10-package">
+            <dt>Package</dt>
+            <dd>
+              <del>react-native-magic-modal</del>
+              <ArrowRight aria-hidden="true" size={15} />
+              <code>magic-modal</code>
+            </dd>
+          </div>
+          <div>
+            <dt>Browser</dt>
+            <dd>
+              <strong>5.3 KB gzip</strong>
+              <span>DOM entry in v10.1</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Native</dt>
+            <dd>
+              <strong>iOS and Android</strong>
+              <span>Native gestures and overlays</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Result</dt>
+            <dd>
+              <code>HideReturn&lt;T&gt;</code>
+              <span>Await the same typed result</span>
+            </dd>
+          </div>
+        </dl>
+      </section>
 
       <section className="mm-request" id="request">
         <div className="mm-request-copy" data-reveal>
