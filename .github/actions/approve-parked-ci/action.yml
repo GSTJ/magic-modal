@@ -74,7 +74,9 @@ runs:
           echo "no pull_request run for $sha, amending to move the head and fire synchronize"
           git -c user.email=gabrielstaveira@gmail.com -c user.name="Gabriel Taveira" \
             commit --amend --no-edit --allow-empty
-          git push --force origin "HEAD:refs/heads/$branch"
+          git -c core.hooksPath=/dev/null push \
+            --force-with-lease="refs/heads/$branch:$sha" \
+            origin "HEAD:refs/heads/$branch"
           sleep 10
         done
 

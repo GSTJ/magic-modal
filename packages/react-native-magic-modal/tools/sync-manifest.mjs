@@ -15,7 +15,8 @@
 // they saw before the rename.
 //
 // Run with `--check` (what `pnpm test` does) to fail on drift, or `--write`
-// (what the release does) to fix it.
+// (what the release preparation workflow does) to fix it before opening the
+// version PR.
 import { readFile, writeFile } from "node:fs/promises";
 
 const shimManifestURL = new URL("../package.json", import.meta.url);

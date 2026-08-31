@@ -1,5 +1,6 @@
 {
   "name": "magic",
+  "private": true,
   "version": "0.0.0",
   "packageManager": "pnpm@11.22.0",
   "repository": {
@@ -17,10 +18,6 @@
     "url": "https://github.com/GSTJ/magic-modal/issues"
   },
   "homepage": "https://magic-modal.gabrieltaveira.dev/",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
   "scripts": {
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
@@ -32,7 +29,7 @@
     "changelog:check": "turbo run changelog:check --filter=magic-modal",
     "release:check": "turbo run release:check --filter=magic-modal",
     "build": "turbo run build",
-    "release": "turbo run release --filter=magic-modal && pnpm --filter react-native-magic-modal run release",
+    "release": "pnpm --filter magic-modal run release",
     "docs": "pnpm --filter magic-modal build && pnpm --filter @magic-modal/docs build",
     "docs:dev": "pnpm --filter magic-modal build && pnpm --filter @magic-modal/docs dev",
     "registry:build": "shadcn build --output apps/docs/public/r && pnpm --filter @magic-modal/docs exec node scripts/format-registry.mjs",

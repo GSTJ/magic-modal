@@ -17,28 +17,26 @@ on:
       - "turbo.json"
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
-  deploy-docs:
-    name: 🚀 Deploy Docs
+  build-docs:
+    name: 📚 Build Docs
     # release-it writes "[skip ci]", with a space. The old guard looked for
     # "[skip-ci]" and never matched anything, same bug release.yml had.
     if: "!contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: 🏗 Setup Repo
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       # No version pin: the action reads `packageManager` from the root
       # package.json, same as every other workflow. Pinning pnpm 8 here is
@@ -49,7 +47,7 @@ jobs:
       # tsconfig extends `expo/tsconfig.base`, so typedoc died on
       # "File 'expo/tsconfig.base' not found".
       - name: 🏗 Setup PNPM
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
 
       - name: 🏗 Get PNPM store directory
         id: pnpm-cache
@@ -57,7 +55,7 @@ jobs:
           echo "pnpm_cache_dir=$(pnpm store path)" >> "$GITHUB_OUTPUT"
 
       - name: 🏗 Setup PNPM cache
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -65,12 +63,12 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: .nvmrc
 
       - name: "📦 Cache Node Modules"
-        uses: actions/cache@v6.1.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: cache-node-modules
         with:
           path: node_modules
@@ -81,27 +79,41 @@ jobs:
       - name: 📦 Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Same pin as release.yml, and for the same reason. This job carries
-      # `pages: write` and `id-token: write`, so whatever runs here can publish
-      # to the project's Pages site. SHA is v1.3.0, what `v1` already resolved
-      # to.
-      - name: 🏗 Setup Turborepo Cache
-        uses: dtinth/setup-github-actions-caching-for-turbo@cc723b4600e40a6b8815b65701d8614b91e2669e # v1.3.0
-
-      - name: 🛠️ Setup Pages
-        uses: actions/configure-pages@v6
+      - name: 🏗 Restore Turborepo Cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.repository_id }}-${{ github.job }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.repository_id }}-${{ github.job }}-
+            ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.repository_id }}-
 
       - name: 📚 Generate Docs
         run: pnpm run docs
 
       - name: 📩 Upload artifact
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: "./apps/docs/out"
           # Next assets live under _next. Preserve .nojekyll so GitHub Pages
           # serves that directory instead of handing the export to Jekyll.
           include-hidden-files: true
 
+  deploy-docs:
+    name: 🚀 Deploy Docs
+    needs: build-docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      id-token: write
+      pages: write
+
+    steps:
+      - name: 🛠️ Setup Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5

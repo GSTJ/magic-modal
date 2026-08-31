@@ -8,6 +8,14 @@ import createPreset from "conventional-changelog-conventionalcommits";
 // policy the release doesn't use — that file also explains what each `effect`
 // buys.
 import { PARSER_OPTS, TYPES as types } from "./tools/changelog-preset.mjs";
+import { releaseBoundary } from "./tools/release-boundary.mjs";
+
+// The 10.0.0 through 10.2.0 tags were cut on runner-only version commits, then
+// the version reached main through a later sync PR. Those tags therefore sit
+// before their real release boundary. Use whichever release marker is newest
+// for both bump calculation and changelog generation. Once the first exact
+// main tag ships, the tag and release commit resolve to the same SHA.
+const boundary = releaseBoundary({ packageDirectory: process.cwd() });
 
 // Squash-merging a PR puts the PR description in the commit body, and Renovate
 // PR descriptions quote the upstream project's changelog verbatim. Several
@@ -34,12 +42,6 @@ import { PARSER_OPTS, TYPES as types } from "./tools/changelog-preset.mjs";
 // so nothing written in a PR description can forge it. Matching on the shape of
 // the prose instead would be a guessing game against whatever upstream writes
 // next.
-const BOT_AUTHORS = new Set([
-  "renovate[bot]",
-  "dependabot[bot]",
-  "github-actions[bot]",
-]);
-
 // `feat!:`, `fix(deps)!:`. A subject-line marker is deliberate in a way quoted
 // prose is not, so it keeps counting no matter who authored the commit. It is
 // also the escape hatch for the one case where a bot-authored commit really is
@@ -70,7 +72,7 @@ const BREAKING_MARKER = /^[a-zA-Z]+(\([^)]*\))?!:/;
  * @returns {ParsedCommit}
  */
 const dropQuotedNotes = (commit) => {
-  if (!BOT_AUTHORS.has(commit.authorName ?? "")) return commit;
+  if (!(commit.authorName ?? "").endsWith("[bot]")) return commit;
   if (BREAKING_MARKER.test(commit.header ?? "")) return commit;
   if (!commit.notes?.length) return commit;
   return { ...commit, notes: [] };
@@ -131,7 +133,13 @@ export default {
       //
       // Bump path only. The changelog generator takes `gitRawCommitsOpts`, not
       // this, so the rendered notes are unaffected.
-      commitsOpts: { format: "%B%n-hash-%n%H%n-authorName-%n%an" },
+      commitsOpts: {
+        from: boundary,
+        format: "%B%n-hash-%n%H%n-authorName-%n%an",
+      },
+      gitRawCommitsOpts: {
+        from: boundary,
+      },
       // Both paths through this plugin load the preset by name, which means
       // upstream's parser options, which means upstream's forgiving note
       // pattern. `tools/changelog-preset.mjs` explains what that pattern let
@@ -165,36 +173,21 @@ export default {
     },
   },
   git: {
-    commitMessage: "chore(release): magic modal release v${version} [skip ci]",
-    pushArgs: ["-o ci.skip"],
+    commitMessage: "chore(release): magic modal release v${version}",
     commit: true,
-    tag: true,
-    // We intentionally do NOT push the release commit/tag back to main from
-    // CI. The repository's GH_PAT secret (dated 2024) is currently rejected
-    // by branch protection ("Permission to GSTJ/magic-modal.git denied to
-    // GSTJ"), which causes the entire publish workflow to fail
-    // AFTER npm publish has already happened — leaving npm and main out of
-    // sync and bricking the workflow forever after.
-    //
-    // Keeping `commit: true` and `tag: true` so the @release-it/github plugin
-    // still has a tag to attach the GitHub Release to within the runner.
-    // The bump commit + tag exist only on the runner. The "Open version sync
-    // PR" step in .github/workflows/release.yml pushes that commit to a branch
-    // and opens a PR, so the version and CHANGELOG.md still reach main. Main
-    // stays at the pre-release version until that PR merges.
-    //
-    // The way out: once GH_PAT is rotated with `contents: write` and granted
-    // bypass on the main ruleset, flip `push` back to `true` and drop the
-    // sync-PR step.
+    // Release preparation happens on a branch and reaches main through the
+    // normal required checks. The tag is created only after that PR merges and
+    // both packages publish from the merge commit.
+    tag: false,
     push: false,
-    requireCleanWorkingDir: false,
+    requireCleanWorkingDir: true,
     tagName: "magic-modal-${version}",
   },
   npm: {
-    publish: true,
+    publish: false,
   },
   github: {
-    release: true,
+    release: false,
     releaseName: "Magic Modal Release ${version}",
   },
 };
