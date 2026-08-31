@@ -1,6 +1,6 @@
 {
   "name": "react-native-magic-modal",
-  "version": "10.2.0",
+  "version": "10.2.1",
   "description": "The former name of magic-modal. Depends on it and re-exports it, so this package stays a drop-in alias. 🦄",
   "keywords": [
     "android",
