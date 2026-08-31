@@ -59,7 +59,7 @@ minimumReleaseAgeExclude:
   - "@xmldom/xmldom@0.8.15"
   - "@xmldom/xmldom@0.9.12"
   # Expo SDK 55's live compatibility map moved on 2026-08-17. Its dependency
-  # closure contains these fresh releases. Remove them after 2026-08-31.
+  # closure contains these fresh releases. Remove them after 2026-09-01.
   - "@expo/router-server@55.0.19"
   - "expo-linking@55.0.17"
   - "expo-router@55.0.18"
@@ -76,11 +76,11 @@ minimumReleaseAgeExclude:
   - "@expo/prebuild-config@55.0.22"
   - "@expo/require-utils@55.0.8"
   - "babel-preset-expo@55.0.25"
-  - "expo@55.0.30"
   - "expo-asset@55.0.20"
   - "expo-file-system@55.0.26"
   - "expo-modules-autolinking@55.0.27"
   - "expo-splash-screen@55.0.25"
+  - "jest-expo@55.0.22"
   - "metro-babel-transformer@0.83.8"
   - "metro-cache-key@0.83.8"
   - "metro-cache@0.83.8"
@@ -96,6 +96,10 @@ minimumReleaseAgeExclude:
   - "metro-transform-plugins@0.83.8"
   - "metro-transform-worker@0.83.8"
   - "ob1@0.83.8"
+  # Expo's SDK 55 compatibility map moved on 2026-08-31. These releases restore
+  # the versions the live doctor requires. Remove them after 2026-09-14.
+  - "expo@55.0.31"
+  - "expo-modules-core@55.0.26"
   # Exact versions already locked before the 14-day quarantine was introduced.
   # They stop bypassing the policy as soon as the lockfile moves past them.
   - "@babel/generator@7.29.8"
@@ -263,7 +267,6 @@ minimumReleaseAgeExclude:
   - "fumadocs-mdx@15.2.1"
   - "giget@3.3.1"
   - "ip-address@10.4.0"
-  - "jest-expo@57.0.3"
   - "lucide-react@1.28.0"
   - "media-typer@1.1.1"
   - "motion-dom@12.43.0"

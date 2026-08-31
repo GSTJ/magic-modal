@@ -14,8 +14,13 @@
       "enabled": false
     },
     {
-      "description": "jest-expo pins the jest 29 toolchain as direct dependencies (@jest/globals, jest-snapshot, jest-environment-jsdom, babel-jest, all ^29.2.1), so jest 30 puts jest-runtime 30 next to jest-mock 29 and every suite fails to load on `this._moduleMocker.clearMocksOnScope is not a function` (#280). @testing-library/react-native 14 is built against jest 30 and wants the new test-renderer peer; under the jest 29 environment its render() returns an empty object and every screen query throws (#275). Both move with the Expo SDK, by hand.",
-      "matchPackageNames": ["jest", "@types/jest", "@testing-library/react-native"],
+      "description": "jest-expo pins the jest 29 toolchain as direct dependencies (@jest/globals, jest-snapshot, jest-environment-jsdom, babel-jest, all ^29.2.1), so jest 30 puts jest-runtime 30 next to jest-mock 29 and every suite fails to load on `this._moduleMocker.clearMocksOnScope is not a function` (#280). @testing-library/react-native 14 is built against jest 30 and wants the new test-renderer peer; under the jest 29 environment its render() returns an empty object and every screen query throws (#275). jest-expo itself follows the Expo SDK: #281 moved it to 57 while the workspace stayed on Expo 55, pulling the React Native 0.86 preset into tests for an app running 0.83. These move with the Expo SDK, by hand.",
+      "matchPackageNames": [
+        "jest",
+        "@types/jest",
+        "@testing-library/react-native",
+        "jest-expo"
+      ],
       "rangeStrategy": "in-range-only"
     },
     {

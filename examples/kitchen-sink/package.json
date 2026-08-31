@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.12",
-    "expo": "^55.0.30",
+    "expo": "~55.0.31",
     "expo-constants": "~55.0.17",
     "expo-linking": "~55.0.16",
     "expo-router": "~55.0.17",
