@@ -8,6 +8,7 @@ export {
   MagicModalHideReason,
   type HideReturn,
   type ModalChildren,
+  type ModalConfigCommon,
   type ModalHandle,
   type Direction,
 } from "./constants/types";
@@ -15,6 +16,7 @@ export type {
   ModalProps,
   NewConfigProps,
 } from "./constants/types.react-native";
+export type { MagicModalAPI } from "./utils/magic-modal-handler";
 export { useMagicModal } from "./components/magic-modal-provider";
 
 /**
