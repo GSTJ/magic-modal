@@ -14,6 +14,7 @@ const shimManifestURL = new URL(
 );
 const rootManifestURL = new URL("../../../package.json", import.meta.url);
 const changelogURL = new URL("../CHANGELOG.md", import.meta.url);
+const modalDirectory = fileURLToPath(new URL("../", import.meta.url));
 
 const VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u;
 const BREAKING_FOOTER = /^BREAKING(?:-| )CHANGE: /mu;
@@ -140,10 +141,35 @@ const isPublished = async (name, version) => {
   return true;
 };
 
+/** @param {string} tag */
+const hasGitHubRelease = async (tag) => {
+  // GitHub owns this value in Actions. The fallback keeps local checks useful.
+  // eslint-disable-next-line no-restricted-properties
+  const repository = process.env.GITHUB_REPOSITORY ?? "GSTJ/magic-modal";
+  const response = await fetch(
+    `https://api.github.com/repos/${repository}/releases/tags/${encodeURIComponent(tag)}`,
+    {
+      headers: { accept: "application/vnd.github+json" },
+      signal: AbortSignal.timeout(15_000),
+    },
+  );
+  if (response.status === 404) return false;
+  if (!response.ok) {
+    throw new Error(
+      `GitHub returned ${response.status} while checking release ${tag}`,
+    );
+  }
+  const release = /** @type {{ draft?: boolean; tag_name?: string }} */ (
+    await response.json()
+  );
+  return release.tag_name === tag && release.draft === false;
+};
+
+const currentBoundary = () =>
+  releaseBoundary({ packageDirectory: modalDirectory });
+
 const commitsSinceBoundary = () => {
-  const boundary = releaseBoundary({
-    packageDirectory: fileURLToPath(new URL("../", import.meta.url)),
-  });
+  const boundary = currentBoundary();
   const range = `${boundary}..HEAD`;
   const output = git("log", range, "--format=%H%x1f%an%x1f%s%x1f%b%x1e");
   if (!output) return [];
@@ -201,32 +227,43 @@ const classify = async () => {
     return;
   }
 
-  if (!modalPublished || !shimPublished) {
-    const boundary = releaseBoundary({
-      packageDirectory: fileURLToPath(new URL("../", import.meta.url)),
-    });
-    const boundarySubject = git("show", "-s", "--format=%s", boundary);
-    assert.match(
-      boundarySubject,
-      new RegExp(
-        `^chore\\(release\\): magic modal release v${escapedVersion}(?: \\(#\\d+\\))?$`,
-        "u",
-      ),
-      `${state.version} is missing from npm, but its manifest boundary is not a prepared release commit`,
-    );
+  const boundary = currentBoundary();
+  const boundarySubject = git("show", "-s", "--format=%s", boundary);
+  const canonicalBoundary = new RegExp(
+    `^chore\\(release\\): magic modal release v${escapedVersion}(?: \\(#\\d+\\))?$`,
+    "u",
+  ).test(boundarySubject);
+  const githubRelease = canonicalBoundary
+    ? await hasGitHubRelease(state.tag)
+    : false;
+
+  if (canonicalBoundary) {
     if (state.tagCommit && state.tagCommit !== boundary) {
       throw new Error(
         `${state.tag} exists on ${state.tagCommit}, not release boundary ${boundary}`,
       );
     }
-    await writeOutputs({
-      mode: "recover",
-      release_sha: boundary,
-      version: state.version,
-      modal_published: modalPublished,
-      shim_published: shimPublished,
-    });
-    return;
+    if (
+      !modalPublished ||
+      !shimPublished ||
+      !state.tagCommit ||
+      !githubRelease
+    ) {
+      await writeOutputs({
+        mode: "recover",
+        release_sha: boundary,
+        version: state.version,
+        modal_published: modalPublished,
+        shim_published: shimPublished,
+        tag_published: Boolean(state.tagCommit),
+        github_release: githubRelease,
+      });
+      return;
+    }
+  } else if (!modalPublished || !shimPublished) {
+    throw new Error(
+      `${state.version} is missing from npm, but its manifest boundary is not a prepared release commit`,
+    );
   }
 
   const qualifying = commitsSinceBoundary().filter(qualifiesForRelease);
@@ -319,6 +356,8 @@ if (command === "check") {
   const notes = releaseNotes(changelog);
   assert.ok(notes, "the first changelog release has no notes");
   process.stdout.write(`${notes}\n`);
+} else if (command === "boundary") {
+  process.stdout.write(`${currentBoundary()}\n`);
 } else if (command === "self-test") {
   selfTest();
 } else {
