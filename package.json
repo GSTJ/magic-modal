@@ -35,7 +35,7 @@
     "release": "turbo run release --filter=magic-modal && pnpm --filter react-native-magic-modal run release",
     "docs": "pnpm --filter magic-modal build && pnpm --filter @magic-modal/docs build",
     "docs:dev": "pnpm --filter magic-modal build && pnpm --filter @magic-modal/docs dev",
-    "registry:build": "shadcn build --output apps/docs/public/r && pnpm --filter @magic-modal/docs exec oxfmt public/r",
+    "registry:build": "shadcn build --output apps/docs/public/r && pnpm --filter @magic-modal/docs exec node scripts/format-registry.mjs",
     "registry:check": "shadcn registry validate && pnpm registry:typecheck && pnpm registry:build",
     "registry:typecheck": "pnpm --filter magic-modal exec tsc --project ../../registry/tsconfig.json",
     "security:check": "pnpm audit",

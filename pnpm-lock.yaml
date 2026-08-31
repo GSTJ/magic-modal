@@ -149,7 +149,7 @@ importers:
         version: 1.2.5(oxfmt@0.63.0)
       magic-oxlint-config:
         specifier: ^2.0.0
-        version: 2.0.4(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.78.0)
+        version: 2.0.5(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.78.0)
       magic-tsconfig:
         specifier: ^1.2.0
         version: 1.2.4
@@ -335,7 +335,7 @@ importers:
         version: 1.2.5(oxfmt@0.63.0)
       magic-oxlint-config:
         specifier: ^2.0.0
-        version: 2.0.4(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.78.0)
+        version: 2.0.5(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.78.0)
       magic-tsconfig:
         specifier: ^1.2.0
         version: 1.2.4
@@ -420,7 +420,7 @@ importers:
         version: 1.2.5(oxfmt@0.63.0)
       magic-oxlint-config:
         specifier: ^2.0.0
-        version: 2.0.4(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.78.0)
+        version: 2.0.5(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.78.0)
       magic-tsconfig:
         specifier: ^1.2.0
         version: 1.2.4
@@ -5494,11 +5494,14 @@ packages:
     peerDependencies:
       eslint: ^3.17.0 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9
 
-  eslint-plugin-safe-jsx@1.3.0:
-    resolution: {integrity: sha512-6IvENBEMjHLxp8TOtSHwZ2qmlsZ1XQEyyO9EVDBze37rLvXyPXmqs0wjFNbXFQpF+oTJhEg7hr/x9qMthqezrw==}
-    engines: {node: '>=4.0'}
+  eslint-plugin-safe-jsx@1.3.8:
+    resolution: {integrity: sha512-xGCIycmXTctB//ijRxvIIk8YReHu4LS69VcEh6XsOMXrZZAx+pPEoVJ1XkO9M1GnhEN9cC795mBqAkc2g38DAQ==}
+    engines: {node: '>=14.0'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9 || ^10
+    peerDependenciesMeta:
+      eslint:
+        optional: true
 
   eslint-scope@5.1.1:
     resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
@@ -7192,8 +7195,8 @@ packages:
       oxlint:
         optional: true
 
-  magic-oxlint-config@2.0.4:
-    resolution: {integrity: sha512-urPfrwREQJMIr8ap1dYEAb9XlJPYbypmSzf/2jmFW25CwiSRE6FEbLjW3FKmJEk8kB1UxLH/s7MUbiiaQ++X6w==}
+  magic-oxlint-config@2.0.5:
+    resolution: {integrity: sha512-Du1NHCqBYIyN+Q4F+SClekCovz0rih8OW1Rbwu4RH07/Vq9mYczJHh8/mmuOtczFif1YcS5y9zGp/b1BjX6rLg==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
       oxlint: '>=1.75.0'
@@ -14834,8 +14837,8 @@ snapshots:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
       eslint-plugin-react-native-globals: 0.1.2
 
-  eslint-plugin-safe-jsx@1.3.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1)):
-    dependencies:
+  eslint-plugin-safe-jsx@1.3.8(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1)):
+    optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
 
   eslint-scope@5.1.1:
@@ -16852,15 +16855,15 @@ snapshots:
   magic-oxlint-config@1.2.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.75.0):
     dependencies:
       eslint-plugin-react-native: 5.0.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-safe-jsx: 1.3.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-safe-jsx: 1.3.8(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
     optionalDependencies:
       oxlint: 1.75.0
     transitivePeerDependencies:
       - eslint
 
-  magic-oxlint-config@2.0.4(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.78.0):
+  magic-oxlint-config@2.0.5(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.78.0):
     dependencies:
-      eslint-plugin-safe-jsx: 1.3.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-safe-jsx: 1.3.8(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
       magic-oxlint-plugin: 1.2.4(oxlint@1.78.0)
     optionalDependencies:
       oxlint: 1.78.0
