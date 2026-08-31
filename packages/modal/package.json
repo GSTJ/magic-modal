@@ -59,7 +59,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "bunchee && node tools/wrap-entrypoints.mjs && node tools/check-web-build.mjs",
+    "build": "bunchee && node tools/wrap-entrypoints.mjs && node tools/check-web-build.mjs && node tools/check-pack-consumer.mjs",
     "lint": "oxlint --report-unused-disable-directives",
     "lint:fix": "oxlint --report-unused-disable-directives --fix",
     "format": "oxfmt --check .",

@@ -176,6 +176,25 @@ try {
     return result.result.value;
   };
 
+  const dispatchClick = async ({ x, y }) => {
+    await devTools.send("Input.dispatchMouseEvent", {
+      button: "left",
+      buttons: 1,
+      clickCount: 1,
+      type: "mousePressed",
+      x,
+      y,
+    });
+    await devTools.send("Input.dispatchMouseEvent", {
+      button: "left",
+      buttons: 0,
+      clickCount: 1,
+      type: "mouseReleased",
+      x,
+      y,
+    });
+  };
+
   await waitFor(
     () =>
       evaluate(`(() => {
@@ -454,8 +473,70 @@ try {
     "the dismissed entry to finish leaving",
   );
 
+  // An exiting entry stays mounted for its animation, but it is no longer the
+  // live modal. Its descendants must leave Chrome's hit-testing immediately.
+  await evaluate(
+    `document.querySelector('[data-testid="open-modal"]').click(); true`,
+  );
+  await waitFor(
+    () =>
+      evaluate(
+        `Boolean(document.querySelector('[data-testid="confirm-modal"]'))`,
+      ),
+    "the pointer-isolation modal",
+  );
+
+  const confirmPoint = await evaluate(`(() => {
+    const confirm = document.querySelector('[data-testid="confirm-modal"]');
+    const { height, left, top, width } = confirm.getBoundingClientRect();
+    window.__magicModalConfirmClicks = 0;
+    confirm.addEventListener("click", () => {
+      window.__magicModalConfirmClicks += 1;
+    });
+    return { x: Math.round(left + width / 2), y: Math.round(top + height / 2) };
+  })()`);
+
+  await dispatchClick(confirmPoint);
+  await waitFor(
+    () =>
+      evaluate(`(() => {
+        const entry = document.querySelector(
+          '[data-testid="magic-modal-stack-entry"]',
+        );
+        return (
+          window.__magicModalConfirmClicks === 1 &&
+          entry?.classList.contains("magic-modal-none")
+        );
+      })()`),
+    "the confirmed entry to start leaving",
+  );
+
+  const staleButtonOwnsPoint = await evaluate(`(() => {
+    const target = document.elementFromPoint(${confirmPoint.x}, ${confirmPoint.y});
+    return Boolean(target?.closest('[data-testid="confirm-modal"]'));
+  })()`);
+  if (staleButtonOwnsPoint) {
+    throw new Error("The exiting modal still owns pointer hit-testing.");
+  }
+
+  await dispatchClick(confirmPoint);
+  const confirmClicks = await evaluate(
+    `new Promise((resolve) => setTimeout(() => resolve(window.__magicModalConfirmClicks), 25))`,
+  );
+  if (confirmClicks !== 1) {
+    throw new Error(`The exiting action fired ${confirmClicks} times.`);
+  }
+
+  await waitFor(
+    () =>
+      evaluate(
+        `document.querySelector('[data-testid="modal-result"]').textContent === "CONFIRMED" && document.querySelectorAll('[data-testid="magic-modal-stack-entry"]').length === 0`,
+      ),
+    "the pointer-isolation exit to settle",
+  );
+
   console.log(
-    "✓ Next.js browser smoke: dialog semantics, stack isolation, focus, Escape, backdrop, and swipe dismissal",
+    "✓ Next.js browser smoke: dialog semantics, stack isolation, focus, Escape, backdrop, swipe dismissal, and exiting pointer isolation",
   );
 } finally {
   devTools?.close();
