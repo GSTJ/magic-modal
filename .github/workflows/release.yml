@@ -121,6 +121,9 @@ jobs:
           BEFORE=$(node -p "require('./packages/modal/package.json').version")
           git config user.name "Gabriel Taveira"
           git config user.email "gabrielstaveira@gmail.com"
+          node packages/modal/tools/attach-release-branch.mjs \
+            "$SOURCE_SHA" \
+            "release-preparation-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           pnpm --filter magic-modal run release
           pnpm --dir packages/react-native-magic-modal exec node tools/sync-manifest.mjs --write
           git add packages/modal/package.json packages/modal/CHANGELOG.md packages/react-native-magic-modal/package.json

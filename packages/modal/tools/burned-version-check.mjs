@@ -35,6 +35,7 @@ import { BURNED_VERSIONS } from "./skip-burned-versions.mjs";
 
 const here = import.meta.dirname;
 const realConfig = join(here, "..", ".release-it.js");
+const attachReleaseBranch = join(here, "attach-release-branch.mjs");
 
 // Resolved rather than assumed to sit at ../node_modules/.bin: pnpm hoists,
 // and in a workspace the binary can land in the root store instead of the
@@ -106,10 +107,35 @@ const inThrowawayRepo = async (commitMessage, run) => {
  *
  * @param {string} commitMessage
  * @param {string} configPath
+ * @param {{ detached?: boolean }} [options]
  * @returns {Promise<string>}
  */
-const releaseVersionFor = (commitMessage, configPath) =>
+const releaseVersionFor = (
+  commitMessage,
+  configPath,
+  { detached = false } = {},
+) =>
   inThrowawayRepo(commitMessage, (repo) => {
+    if (detached) {
+      const sourceSha = execFileSync("git", ["rev-parse", "HEAD"], {
+        cwd: repo,
+        encoding: "utf8",
+      }).trim();
+      execFileSync("git", ["push", "--quiet", "origin", "main"], {
+        cwd: repo,
+        stdio: "pipe",
+      });
+      execFileSync("git", ["switch", "--detach", sourceSha], {
+        cwd: repo,
+        stdio: "pipe",
+      });
+      execFileSync(
+        process.execPath,
+        [attachReleaseBranch, sourceSha, "release-preparation-1-1"],
+        { cwd: repo, stdio: "pipe" },
+      );
+    }
+
     const output = execFileSync(
       process.execPath,
       [releaseItBin, "--release-version", "--ci", "--config", configPath],
@@ -149,6 +175,14 @@ const guardedPatch = await releaseVersionFor(ORDINARY, realConfig);
 expect(
   `a fix over 10.1.1 still releases 10.1.2 (got ${guardedPatch})`,
   guardedPatch === "10.1.2",
+);
+
+const detachedPatch = await releaseVersionFor(ORDINARY, realConfig, {
+  detached: true,
+});
+expect(
+  `a detached release checkout attaches safely and releases 10.1.2 (got ${detachedPatch})`,
+  detachedPatch === "10.1.2",
 );
 
 // 3. Negative control: the raw plugin with the same options computes the
@@ -201,5 +235,5 @@ if (failures.length > 0) {
 }
 
 console.log(
-  `burned version check passed (breaking over 10.1.1: guarded=${guardedMajor}, raw plugin=${unguardedMajor}; fix over 10.1.1: ${guardedPatch})`,
+  `burned version check passed (breaking over 10.1.1: guarded=${guardedMajor}, raw plugin=${unguardedMajor}; fix over 10.1.1: attached=${detachedPatch}, branch=${guardedPatch})`,
 );
