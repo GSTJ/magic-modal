@@ -13,6 +13,12 @@ const githubActionsBuildType =
   "https://slsa-framework.github.io/github-actions-buildtypes/workflow/v1";
 const sigstoreBundleType = "application/vnd.dev.sigstore.bundle.v0.3+json";
 const inTotoPayloadType = "application/vnd.in-toto+json";
+const registryProvenancePollIntervalMs = 3_000;
+const registryProvenancePollTimeoutMs = 5 * 60_000;
+const registryProvenancePollAttempts =
+  Math.ceil(
+    registryProvenancePollTimeoutMs / registryProvenancePollIntervalMs,
+  ) + 1;
 
 /** @typedef {{ dependencies?: Record<string, string>; name: string; version: string }} PackageManifest */
 /** @typedef {{ file: string; integrity: string; name: string; sha256: string; sha512: string; version: string }} ReleaseArtifact */
@@ -602,12 +608,12 @@ const verifyRegistryAttempt = async (metadata, attempt) => {
     console.log(`registry bytes and provenance match ${metadata.version}`);
     return;
   }
-  if (attempt >= 20) {
+  if (attempt >= registryProvenancePollAttempts) {
     throw new Error(
-      `npm did not expose both provenance attestations within 60 seconds`,
+      `npm did not expose both provenance attestations within ${registryProvenancePollTimeoutMs / 1_000} seconds`,
     );
   }
-  await delay(3_000);
+  await delay(registryProvenancePollIntervalMs);
   return verifyRegistryAttempt(metadata, attempt + 1);
 };
 
