@@ -65,8 +65,7 @@
     "format": "oxfmt --check .",
     "format:fix": "oxfmt .",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "test": "node tools/sync-manifest.mjs --check",
-    "release": "node tools/release.mjs"
+    "test": "node tools/sync-manifest.mjs --check"
   },
   "dependencies": {
     "magic-modal": "workspace:*"

@@ -81,12 +81,10 @@ jobs:
       - name: 📦 Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Same pin as release.yml, and for the same reason. This job carries
-      # `pages: write` and `id-token: write`, so whatever runs here can publish
-      # to the project's Pages site. SHA is v1.3.0, what `v1` already resolved
-      # to.
+      # The old dtinth action is unmaintained and its cache server now returns
+      # 400/500 responses. This is the maintained Node 24 replacement.
       - name: 🏗 Setup Turborepo Cache
-        uses: dtinth/setup-github-actions-caching-for-turbo@cc723b4600e40a6b8815b65701d8614b91e2669e # v1.3.0
+        uses: rharkor/caching-for-turbo@2238fae6eb9a9936f92356f54cb3660200d105e7 # v2.5.1
 
       - name: 🛠️ Setup Pages
         uses: actions/configure-pages@v6

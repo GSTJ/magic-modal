@@ -165,36 +165,21 @@ export default {
     },
   },
   git: {
-    commitMessage: "chore(release): magic modal release v${version} [skip ci]",
-    pushArgs: ["-o ci.skip"],
+    commitMessage: "chore(release): magic modal release v${version}",
     commit: true,
-    tag: true,
-    // We intentionally do NOT push the release commit/tag back to main from
-    // CI. The repository's GH_PAT secret (dated 2024) is currently rejected
-    // by branch protection ("Permission to GSTJ/magic-modal.git denied to
-    // GSTJ"), which causes the entire publish workflow to fail
-    // AFTER npm publish has already happened — leaving npm and main out of
-    // sync and bricking the workflow forever after.
-    //
-    // Keeping `commit: true` and `tag: true` so the @release-it/github plugin
-    // still has a tag to attach the GitHub Release to within the runner.
-    // The bump commit + tag exist only on the runner. The "Open version sync
-    // PR" step in .github/workflows/release.yml pushes that commit to a branch
-    // and opens a PR, so the version and CHANGELOG.md still reach main. Main
-    // stays at the pre-release version until that PR merges.
-    //
-    // The way out: once GH_PAT is rotated with `contents: write` and granted
-    // bypass on the main ruleset, flip `push` back to `true` and drop the
-    // sync-PR step.
+    // Release preparation happens on a branch and reaches main through the
+    // normal required checks. The tag is created only after that PR merges and
+    // both packages publish from the merge commit.
+    tag: false,
     push: false,
-    requireCleanWorkingDir: false,
+    requireCleanWorkingDir: true,
     tagName: "magic-modal-${version}",
   },
   npm: {
-    publish: true,
+    publish: false,
   },
   github: {
-    release: true,
+    release: false,
     releaseName: "Magic Modal Release ${version}",
   },
 };

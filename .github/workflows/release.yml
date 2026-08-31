@@ -5,71 +5,59 @@ on:
     branches: [main]
   workflow_dispatch:
     inputs:
-      sync_pr_dry_run:
-        description: >
-          Skip the release and drive the sync PR steps with an empty commit.
-          Checks that path without cutting a release.
-        type: boolean
-        default: false
+      expected_sha:
+        description: Exact merged release commit to publish. Leave empty to inspect main.
+        type: string
+        required: false
+      cleanup_branch:
+        description: Temporary release branch to remove after verified publication.
+        type: string
+        required: false
+
+concurrency:
+  group: magic-modal-release
+  cancel-in-progress: false
 
 jobs:
   release:
     name: 🎉 Release
-    # release-it writes "[skip ci]", with a space. The old guard looked for
-    # "[skip-ci]" and never matched anything. github.event.commits is null on
-    # workflow_dispatch, so toJSON gives "null" and the guard lets it through.
-    if: "!contains(toJSON(github.event.commits.*.message), '[skip ci]')"
+    if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' || inputs.expected_sha != ''
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
-      # Needed to POST actions/runs/{id}/approve. A PR opened with
-      # GITHUB_TOKEN gets its pull_request run parked at action_required, and
-      # the ruleset only counts checks attached to the PR.
       actions: write
+      contents: write
+      id-token: write
+      pull-requests: write
 
     steps:
-      # Resolved in shell rather than in an `if:` expression. A boolean
-      # workflow_dispatch input reaches expressions as a string in some places
-      # and a boolean in others, and `inputs` isn't populated at all on push,
-      # so `inputs.sync_pr_dry_run == true` is not something to bet the
-      # publish path on. `github.event.inputs.*` renders to "true", "false" or
-      # "" every time.
-      - name: 🔀 Pick the mode
-        id: mode
-        env:
-          RAW: ${{ github.event.inputs.sync_pr_dry_run }}
-          EVENT: ${{ github.event_name }}
-        run: |
-          if [ "$EVENT" = "workflow_dispatch" ] && [ "$RAW" = "true" ]; then
-            echo "dry_run=true" >> "$GITHUB_OUTPUT"
-            echo "Dry run. No release, no publish."
-          else
-            echo "dry_run=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: 🏗 Setup Repo
         uses: actions/checkout@v7
         with:
-          # Need full history so the no-op probe below can locate the last
-          # release boundary commit and grep for qualifying commits since.
           fetch-depth: 0
-          # No GH_PAT here on purpose. It used to be checked out so release-it
-          # could push the bump commit straight to main, and it failed with
-          # "Permission denied". `.release-it.js` sets `git.push: false` now, so
-          # nothing in this job needs a PAT, and the credential that stays in
-          # the local git config has to be one that can actually push. The sync
-          # PR branch below is pushed with it, and GITHUB_TOKEN can write
-          # `chore/release-sync-*` because the ruleset only covers main.
-          persist-credentials: true
+          ref: ${{ inputs.expected_sha || github.sha }}
+
+      - name: 🔒 Verify manual release target
+        if: github.event_name == 'workflow_dispatch' && inputs.expected_sha != ''
+        env:
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+        run: |
+          set -euo pipefail
+          [ "$(git rev-parse HEAD)" = "$EXPECTED_SHA" ]
+          git fetch origin main
+          git merge-base --is-ancestor "$EXPECTED_SHA" origin/main
 
       - name: 🏗 Setup PNPM
         uses: pnpm/action-setup@v6
 
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://registry.npmjs.org
+
       - name: 🏗 Get PNPM store directory
         id: pnpm-cache
-        run: |
-          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+        run: echo "pnpm_cache_dir=$(pnpm store path)" >> "$GITHUB_OUTPUT"
 
       - name: 🏗 Setup PNPM cache
         uses: actions/cache@v6
@@ -79,262 +67,197 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: 🏗 Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-
-      - name: "📦 Cache Node Modules"
-        uses: actions/cache@v6.1.0
-        id: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-
       - name: 📦 Install Dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      # Pinned to a commit, not the `v1` tag. This is the only third-party
-      # action in the repo that isn't `actions/*` or `pnpm/*`, it sits on a
-      # personal account, and it hasn't been pushed to since June 2024. It also
-      # leaves an HTTP server running on localhost for the rest of the job, and
-      # this job is the one that puts NPM_TOKEN on disk a few steps down. A
-      # mutable tag there means someone else's account decides what runs next to
-      # our publish credentials. SHA is v1.3.0, what `v1` already resolved to.
-      - name: 🏗 Setup Turborepo Cache
-        uses: dtinth/setup-github-actions-caching-for-turbo@cc723b4600e40a6b8815b65701d8614b91e2669e # v1.3.0
-
-      - name: 🛠️ Build
-        run: pnpm run build
-
-      - name: 🔎 Determine next version
-        id: next-version
-        if: steps.mode.outputs.dry_run == 'false'
-        working-directory: packages/modal
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Nothing below this step can see NPM_TOKEN. A merged commit has to pass
+      # the same gates as a PR before the publishing step receives it.
+      - name: 🧪 Prove the release tree
         run: |
-          # We can't trust `release-it --release-version` here: when no commits
-          # match the `(modal)` scope filter, the conventional-changelog plugin
-          # returns no recommendation and release-it's Version plugin falls
-          # back to a CI-default `patch` of `latestVersion`. That made the
-          # probe print a version even with zero qualifying commits, so the
-          # script proceeded to publish.
-          #
-          # Instead, decide skip deterministically from git history. The
-          # boundary is the most recent of:
-          #   - last `magic-modal-*` tag. release-it never pushes one (see
-          #     .release-it.js), but the @release-it/github plugin creates the
-          #     GitHub Release, and that creates the tag ref, so
-          #     magic-modal-7.0.3, -7.1.0 and -8.0.0 do exist on the remote.
-          #   - last `chore(release):` commit (release-it's own bump commit,
-          #     which reaches main as the squash of the sync PR below)
-          #   - last `chore(modal): sync version` commit (manual sync fallback)
-          # We then look for any commit since the boundary that qualifies for a
-          # release. `packages/modal/.release-it.js` no longer filters commits,
-          # so this probe is the only thing deciding whether one happens.
-          CURRENT=$(node -p "require('./package.json').version")
-          echo "current=$CURRENT"
-          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          pnpm run build
+          pnpm run lint
+          pnpm run format
+          pnpm run typecheck
+          pnpm run test
+          pnpm run doctor
+          pnpm run changelog:check
+          pnpm run release:check
+          git diff --exit-code
 
-          TAG_BOUND=$(git describe --tags --abbrev=0 --match='magic-modal-*' 2>/dev/null || true)
-          REL_BOUND=$(git log -1 --pretty=%H --grep='^chore(release)' 2>/dev/null || true)
-          SYNC_BOUND=$(git log -1 --pretty=%H --grep='^chore(modal): sync version' 2>/dev/null || true)
-          CANDIDATES=$(printf '%s\n%s\n%s\n' "$TAG_BOUND" "$REL_BOUND" "$SYNC_BOUND" | grep -v '^$' || true)
+      - name: 🔎 Classify the release
+        id: state
+        run: node packages/modal/tools/release-integrity.mjs classify
 
-          if [ -z "$CANDIDATES" ]; then
-            # No boundary at all (fresh repo), so let the release flow run.
-            echo "No release boundary found; proceeding."
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+      - name: 💤 No package release due
+        if: steps.state.outputs.mode == 'skip'
+        run: echo "No qualifying package commits since the last release."
 
-          BOUNDARY=$(echo "$CANDIDATES" | xargs -I{} git log -1 --pretty="%ct %H" {} 2>/dev/null | sort -rn | head -1 | awk '{print $2}')
-          echo "boundary=$BOUNDARY ($(git log -1 --pretty=%s "$BOUNDARY"))"
-
-          # A commit qualifies if ANY of:
-          #   - its subject (first line) has `(modal)` scope,
-          #   - its subject marks a breaking change with `!` before the colon
-          #     (`feat!:`, `fix(deps)!:`), which conventional-commits treats as
-          #     a major on its own, with or without a footer,
-          #   - its body contains a line starting with `BREAKING CHANGE: `
-          #     or `BREAKING-CHANGE: ` (the conventional-commits footer) AND a
-          #     human wrote it.
-          #
-          # That footer match is uppercase, anchored, and requires the colon
-          # AND the space after it, which is the same strict form
-          # `packages/modal/tools/changelog-preset.mjs` pins `notesPattern` to.
-          # The two have to agree: this probe decides whether a release runs,
-          # the preset decides how big it is, and 11.0.0 is what it looks like
-          # when they disagree. There, prose reading "breaking change on
-          # `style` typing." fell out of a re-wrapped PR body. This probe
-          # correctly ignored it and the preset did not, so the release ran on
-          # the `(modal)` scope and then computed a major off the prose.
-          # We can't use `git log --grep` here because that searches the
-          # entire commit message; a PR description that mentions
-          # "BREAKING CHANGE" in prose would falsely match. Iterate
-          # commits with a unit separator and check each part explicitly.
-          #
-          # The author check is the same guard `packages/modal/.release-it.js`
-          # applies to the bump, kept here so the two agree. Squash-merging a
-          # PR puts the PR description in the commit body, and a Renovate
-          # description quotes the upstream project's changelog verbatim — so a
-          # dependency chore can carry someone else's `BREAKING CHANGE:` line
-          # and, without this, qualify for a release the repo never wanted.
-          # `%an` on a squash merge is the PR author, off the commit object, so
-          # nothing in a PR description can forge it. The `!` marker above is
-          # deliberate and still counts for anyone, which is the escape hatch
-          # for a human pushing a real breaking change onto a bot branch. An
-          # unrecognised author is treated as a human on purpose.
-          UNIT=$'\x1f'
-          REC=$'\x1e'
-          COMMITS=$(git log "$BOUNDARY..HEAD" --pretty=format:"%H${UNIT}%an${UNIT}%s${UNIT}%b${REC}")
-          QUALIFY=""
-          while IFS= read -r -d "$REC" entry; do
-            [ -z "$entry" ] && continue
-            sha=$(printf '%s' "$entry" | awk -F"$UNIT" '{print $1}')
-            author=$(printf '%s' "$entry" | awk -F"$UNIT" '{print $2}')
-            subject=$(printf '%s' "$entry" | awk -F"$UNIT" '{print $3}')
-            body=$(printf '%s' "$entry" | awk -F"$UNIT" '{for(i=4;i<=NF;i++) printf "%s%s", $i, (i<NF?FS:"")}')
-            if printf '%s' "$subject" | grep -qE '\(modal\)|^[a-zA-Z]+(\([^)]*\))?!:'; then
-              QUALIFY="${QUALIFY}${subject}"$'\n'
-              continue
-            fi
-            case "$author" in
-              'renovate[bot]'|'dependabot[bot]'|'github-actions[bot]') continue ;;
-            esac
-            if printf '%s' "$body" | grep -qE '^BREAKING[- ]CHANGE: '; then
-              QUALIFY="${QUALIFY}${subject}"$'\n'
-            fi
-          done <<< "$COMMITS"
-          QUALIFY=$(printf '%s' "$QUALIFY" | sed '/^$/d')
-
-          if [ -z "$QUALIFY" ]; then
-            echo "No qualifying commits since boundary. Skipping release."
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Qualifying commits found:"
-            echo "$QUALIFY"
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: 🚀 Release
-        if: steps.next-version.outputs.skip == 'false'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: 📝 Prepare version and changelog
+        if: steps.state.outputs.mode == 'prepare'
         run: |
-          git config --global user.email "gabrielstaveira@gmail.com"
-          git config --global user.name "Gabriel Taveira"
-          npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
-          pnpm run release
+          git config user.name "Gabriel Taveira"
+          git config user.email "gabrielstaveira@gmail.com"
+          pnpm --filter magic-modal run release
+          pnpm --dir packages/react-native-magic-modal exec node tools/sync-manifest.mjs --write
+          git add packages/modal/package.json packages/modal/CHANGELOG.md packages/react-native-magic-modal/package.json
+          git commit --amend --no-edit
+          node packages/modal/tools/release-integrity.mjs check
 
-      # A release happens rarely, so the steps below it can sit unexecuted for
-      # weeks. This one stands in for release-it's version bump so they can be
-      # driven on demand, with no publish and no version change. Dispatch the
-      # workflow with sync_pr_dry_run to use it.
-      - name: 🧪 Stage a dry-run commit
-        id: dry-run
-        if: steps.mode.outputs.dry_run == 'true'
-        run: |
-          git config --global user.email "gabrielstaveira@gmail.com"
-          git config --global user.name "Gabriel Taveira"
-          git commit --allow-empty \
-            -m "chore(ci): dry-run the release sync PR path" \
-            -m "An empty commit standing in for release-it's version bump. Driven by the Publish workflow with sync_pr_dry_run, run ${{ github.run_id }}."
-
-      - name: 🔁 Open version sync PR
-        id: sync-pr
-        if: steps.mode.outputs.dry_run == 'true' || steps.next-version.outputs.skip == 'false'
-        # release-it commits the version bump and the generated CHANGELOG.md on
-        # the runner but doesn't push (see packages/modal/.release-it.js), so
-        # main never saw either. That's how main ended up on 7.0.3 while npm was
-        # on 7.1.0, with no 7.0.3 or 7.1.0 section in the changelog.
-        #
-        # continue-on-error because npm has already published by this point.
-        # A failure here leaves main stale, which the next release can still fix.
-        continue-on-error: true
+      - name: 🔁 Open the prepared release PR
+        id: release-pr
+        if: steps.state.outputs.mode == 'prepare'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DRY_RUN: ${{ steps.mode.outputs.dry_run }}
-          VERSION_BEFORE: ${{ steps.next-version.outputs.current }}
           RUN_ID: ${{ github.run_id }}
         run: |
           set -euo pipefail
+          VERSION=$(node -p "require('./packages/modal/package.json').version")
+          BRANCH="chore/release-$VERSION"
+          TITLE="chore(release): magic modal release v$VERSION"
+          BODY=$(printf '%s\n' \
+            "## Summary" \
+            "" \
+            "Prepare magic-modal $VERSION for publication." \
+            "" \
+            "## Details" \
+            "" \
+            "- Bump both package manifests to the same version." \
+            "- Generate the $VERSION changelog from the reviewed commit history." \
+            "- Publish only after this commit reaches main through the required checks." \
+            "" \
+            "## Testing steps" \
+            "" \
+            "The Publish workflow ran the full build, lint, format, typecheck, test, doctor, audit, changelog, and release-integrity gates before opening this PR." \
+            "" \
+            "Workflow proof: https://github.com/${{ github.repository }}/actions/runs/$RUN_ID")
 
-          if [ "$DRY_RUN" = "true" ]; then
-            BRANCH="chore/release-sync-dry-run-$RUN_ID"
-            TITLE="chore(ci): dry-run the release sync PR path"
-            BODY=$(printf '%s\n' \
-              "An empty commit standing in for release-it's version bump. No publish, no version" \
-              "change." \
-              "" \
-              "A PR opened from CI with GITHUB_TOKEN gets its pull_request run parked at" \
-              "action_required, so the context the main ruleset requires never reports. The" \
-              "Publish workflow approves the parked run and turns on auto-merge. This PR should" \
-              "merge on its own." \
-              "" \
-              "Opened by the Publish workflow, run $RUN_ID.")
-          else
-            VERSION=$(node -p "require('./packages/modal/package.json').version")
-            if [ "$VERSION" = "$VERSION_BEFORE" ]; then
-              echo "Version is still $VERSION, nothing to sync."
-              exit 0
-            fi
-            BRANCH="chore/release-sync-$VERSION"
-            TITLE="chore(release): sync magic modal version with npm $VERSION"
-            BODY=$(printf '%s\n' \
-              "release-it published $VERSION to npm and tagged magic-modal-$VERSION." \
-              "" \
-              "It doesn't push to main (see packages/modal/.release-it.js), so the version bump and" \
-              "the generated changelog live only on the release runner. This is that commit." \
-              "" \
-              "Opened by the Publish workflow, run $RUN_ID.")
-          fi
-
-          git push --force origin "HEAD:refs/heads/$BRANCH"
-
+          git push --force-with-lease origin "HEAD:refs/heads/$BRANCH"
           PR=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number')
           if [ -z "$PR" ] || [ "$PR" = "null" ]; then
             gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "$BODY"
             PR=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number')
-          else
-            echo "PR #$PR for $BRANCH already open."
           fi
-
-          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
           echo "pr=$PR" >> "$GITHUB_OUTPUT"
 
       - name: ✅ Release the parked check run
-        if: steps.sync-pr.outputs.pr != ''
-        continue-on-error: true
+        if: steps.release-pr.outputs.pr != ''
         uses: ./.github/actions/approve-parked-ci
         with:
-          pull-request: ${{ steps.sync-pr.outputs.pr }}
+          pull-request: ${{ steps.release-pr.outputs.pr }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Nothing was merging these. #240 and #247 both sat open until someone
-      # closed them by hand, which is how main drifts from npm.
       - name: 🤝 Turn on auto-merge
-        if: steps.sync-pr.outputs.pr != ''
-        continue-on-error: true
+        if: steps.release-pr.outputs.pr != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR: ${{ steps.sync-pr.outputs.pr }}
+          PR: ${{ steps.release-pr.outputs.pr }}
         run: |
           if gh pr merge "$PR" --auto --squash --delete-branch; then
-            echo "auto-merge armed on #$PR"
             exit 0
           fi
-
-          # GitHub rejects --auto on a PR that is already CLEAN, which happens
-          # if Branch Checkup finished while the approve step was still polling.
           STATE=$(gh pr view "$PR" --json mergeStateStatus --jq .mergeStateStatus)
-          echo "auto-merge was rejected, mergeStateStatus=$STATE"
           if [ "$STATE" = "CLEAN" ]; then
             gh pr merge "$PR" --squash --delete-branch
           else
-            echo "::warning::#$PR is $STATE and auto-merge did not take. Needs a look."
+            echo "::error::Release PR #$PR is $STATE and auto-merge could not be enabled."
+            exit 1
           fi
+
+      # A PR merged by GITHUB_TOKEN does not emit another push workflow. Wait
+      # for the checked release PR, pin a temporary ref to its squash commit,
+      # and dispatch this workflow there. That also makes the provenance SHA
+      # identical to the commit the tag will name.
+      - name: ▶️ Dispatch publication from the merge commit
+        if: steps.release-pr.outputs.pr != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ steps.release-pr.outputs.pr }}
+        run: |
+          set -euo pipefail
+          for _attempt in $(seq 1 180); do
+            STATE=$(gh pr view "$PR" --json state --jq .state)
+            if [ "$STATE" = "MERGED" ]; then
+              SHA=$(gh pr view "$PR" --json mergeCommit --jq .mergeCommit.oid)
+              VERSION=$(gh pr view "$PR" --json title --jq '.title | capture("v(?<version>[0-9]+\\.[0-9]+\\.[0-9]+)$").version')
+              BRANCH="chore/release-publish-$VERSION"
+              git fetch origin "$SHA"
+              git push --force-with-lease origin "$SHA:refs/heads/$BRANCH"
+              gh workflow run release.yml --ref "$BRANCH" -f expected_sha="$SHA" -f cleanup_branch="$BRANCH"
+              exit 0
+            fi
+            if [ "$STATE" = "CLOSED" ]; then
+              echo "::error::Release PR #$PR closed without merging."
+              exit 1
+            fi
+            sleep 10
+          done
+          echo "::error::Release PR #$PR did not merge within 30 minutes."
+          exit 1
+
+      - name: 📦 Publish both package names
+        if: steps.state.outputs.mode == 'publish'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION=${{ steps.state.outputs.version }}
+          TAG="magic-modal-$VERSION"
+          HEAD=$(git rev-parse HEAD)
+
+          if git rev-parse "$TAG^{commit}" >/dev/null 2>&1; then
+            [ "$(git rev-parse "$TAG^{commit}")" = "$HEAD" ]
+          else
+            git tag --annotate "$TAG" --message "Magic Modal $VERSION"
+          fi
+          node packages/modal/tools/release-integrity.mjs check --tag
+
+          if npm view "magic-modal@$VERSION" version >/dev/null 2>&1; then
+            echo "magic-modal@$VERSION is already published."
+          else
+            pnpm --filter magic-modal publish --no-git-checks --access public --provenance
+          fi
+
+          if npm view "react-native-magic-modal@$VERSION" version >/dev/null 2>&1; then
+            echo "react-native-magic-modal@$VERSION is already published."
+          else
+            pnpm --filter react-native-magic-modal publish --no-git-checks --access public --provenance
+          fi
+
+          # shellcheck disable=SC2016
+          MESSAGE='Renamed to `magic-modal`. This package still works and tracks every release, but new code should install `magic-modal` instead. See https://github.com/GSTJ/magic-modal'
+          npm deprecate "react-native-magic-modal@<$VERSION" "$MESSAGE"
+          git push origin "refs/tags/$TAG"
+
+      - name: 🏷 Publish GitHub release and verify registry state
+        if: steps.state.outputs.mode == 'publish'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION=${{ steps.state.outputs.version }}
+          TAG="magic-modal-$VERSION"
+          HEAD=$(git rev-parse HEAD)
+          node packages/modal/tools/release-integrity.mjs check --tag
+          node packages/modal/tools/release-integrity.mjs notes > "$RUNNER_TEMP/release-notes.md"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "Magic Modal Release $VERSION" --notes-file "$RUNNER_TEMP/release-notes.md"
+          else
+            gh release create "$TAG" --verify-tag --title "Magic Modal Release $VERSION" --notes-file "$RUNNER_TEMP/release-notes.md"
+          fi
+
+          [ "$(gh api "repos/${{ github.repository }}/commits/$TAG" --jq .sha)" = "$HEAD" ]
+          [ "$(npm view "magic-modal@$VERSION" version)" = "$VERSION" ]
+          [ "$(npm view "react-native-magic-modal@$VERSION" version)" = "$VERSION" ]
+          [ "$(npm view "magic-modal@$VERSION" gitHead)" = "$HEAD" ]
+          [ "$(npm view "react-native-magic-modal@$VERSION" gitHead)" = "$HEAD" ]
+
+      - name: 🧹 Remove the temporary publish branch
+        if: steps.state.outputs.mode == 'publish' && inputs.cleanup_branch != ''
+        env:
+          CLEANUP_BRANCH: ${{ inputs.cleanup_branch }}
+        run: |
+          case "$CLEANUP_BRANCH" in
+            chore/release-publish-*) git push origin --delete "$CLEANUP_BRANCH" ;;
+            *) echo "::error::Refusing to delete unexpected branch $CLEANUP_BRANCH"; exit 1 ;;
+          esac
