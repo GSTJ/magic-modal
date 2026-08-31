@@ -15,7 +15,9 @@ on:
         required: false
 
 concurrency:
-  group: magic-modal-release
+  # Main pushes serialize release preparation. A prepared release is dispatched
+  # under its exact SHA, so it cannot be displaced by another pending main run.
+  group: magic-modal-release-${{ inputs.expected_sha || 'main' }}
   cancel-in-progress: false
 
 jobs:
@@ -23,34 +25,40 @@ jobs:
     name: 🎉 Release
     if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' || inputs.expected_sha != ''
     runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.state.outputs.mode }}
+      release_sha: ${{ inputs.expected_sha || github.sha }}
+      version: ${{ steps.state.outputs.version }}
     permissions:
       actions: write
       contents: write
-      id-token: write
       pull-requests: write
 
     steps:
       - name: 🏗 Setup Repo
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          persist-credentials: false
           ref: ${{ inputs.expected_sha || github.sha }}
 
       - name: 🔒 Verify manual release target
         if: github.event_name == 'workflow_dispatch' && inputs.expected_sha != ''
         env:
           EXPECTED_SHA: ${{ inputs.expected_sha }}
+          EVENT_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
+          [ "$EVENT_SHA" = "$EXPECTED_SHA" ]
           [ "$(git rev-parse HEAD)" = "$EXPECTED_SHA" ]
           git fetch origin main
           git merge-base --is-ancestor "$EXPECTED_SHA" origin/main
 
       - name: 🏗 Setup PNPM
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: .nvmrc
           registry-url: https://registry.npmjs.org
@@ -60,7 +68,7 @@ jobs:
         run: echo "pnpm_cache_dir=$(pnpm store path)" >> "$GITHUB_OUTPUT"
 
       - name: 🏗 Setup PNPM cache
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -131,6 +139,8 @@ jobs:
             "" \
             "Workflow proof: https://github.com/${{ github.repository }}/actions/runs/$RUN_ID")
 
+          gh auth setup-git
+          git fetch origin "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH" || true
           git push --force-with-lease origin "HEAD:refs/heads/$BRANCH"
           PR=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number')
           if [ -z "$PR" ] || [ "$PR" = "null" ]; then
@@ -181,6 +191,7 @@ jobs:
               VERSION=$(gh pr view "$PR" --json title --jq '.title | capture("v(?<version>[0-9]+\\.[0-9]+\\.[0-9]+)$").version')
               BRANCH="chore/release-publish-$VERSION"
               git fetch origin "$SHA"
+              git fetch origin "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH" || true
               git push --force-with-lease origin "$SHA:refs/heads/$BRANCH"
               gh workflow run release.yml --ref "$BRANCH" -f expected_sha="$SHA" -f cleanup_branch="$BRANCH"
               exit 0
@@ -194,15 +205,96 @@ jobs:
           echo "::error::Release PR #$PR did not merge within 30 minutes."
           exit 1
 
-      - name: 📦 Publish both package names
+      - name: 📦 Pack the reviewed release artifacts
         if: steps.state.outputs.mode == 'publish'
+        run: node packages/modal/tools/release-artifacts.mjs pack "$RUNNER_TEMP/release-artifacts"
+
+      - name: 📤 Preserve the exact tarballs
+        if: steps.state.outputs.mode == 'publish'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: release-artifacts
+          path: ${{ runner.temp }}/release-artifacts
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: 📦 Publish verified tarballs
+    needs: release
+    if: needs.release.outputs.mode == 'publish'
+    runs-on: ubuntu-latest
+    environment: npm-release
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: 🏗 Setup Repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ needs.release.outputs.release_sha }}
+
+      - name: 🔒 Verify the merged release target
+        env:
+          EXPECTED_SHA: ${{ needs.release.outputs.release_sha }}
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$EXPECTED_SHA" | grep -qE '^[0-9a-f]{40}$'
+          [ "$EVENT_SHA" = "$EXPECTED_SHA" ]
+          [ "$(git rev-parse HEAD)" = "$EXPECTED_SHA" ]
+          git fetch origin main
+          git merge-base --is-ancestor "$EXPECTED_SHA" origin/main
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://registry.npmjs.org
+
+      - name: 📥 Download the exact tarballs
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: release-artifacts
+          path: ${{ runner.temp }}/release-artifacts
+
+      - name: 🔎 Verify artifact bytes and package manifests
+        run: node packages/modal/tools/release-artifacts.mjs verify "$RUNNER_TEMP/release-artifacts"
+
+      - name: 📦 Publish both package names
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
-          VERSION=${{ steps.state.outputs.version }}
+          DIR="$RUNNER_TEMP/release-artifacts"
+          for NAME in magic-modal react-native-magic-modal; do
+            STATUS=$(node packages/modal/tools/release-artifacts.mjs status "$DIR" "$NAME")
+            if [ "$STATUS" = "matching" ]; then
+              echo "$NAME@${{ needs.release.outputs.version }} already has these exact bytes."
+              continue
+            fi
+            [ "$STATUS" = "missing" ]
+            FILE=$(node -e "const data=require('$DIR/release-artifacts.json'); console.log(data.artifacts.find((item) => item.name === '$NAME').file)")
+            npm publish "$DIR/$FILE" --access public --provenance --ignore-scripts
+          done
+
+          # shellcheck disable=SC2016
+          MESSAGE='Renamed to `magic-modal`. This package still works and tracks every release, but new code should install `magic-modal` instead. See https://github.com/GSTJ/magic-modal'
+          npm deprecate "react-native-magic-modal@<${{ needs.release.outputs.version }}" "$MESSAGE"
+          node packages/modal/tools/release-artifacts.mjs registry "$DIR"
+
+      - name: 🏷 Publish GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION=${{ needs.release.outputs.version }}
           TAG="magic-modal-$VERSION"
           HEAD=$(git rev-parse HEAD)
+          git config user.name "Gabriel Taveira"
+          git config user.email "gabrielstaveira@gmail.com"
 
           if git rev-parse "$TAG^{commit}" >/dev/null 2>&1; then
             [ "$(git rev-parse "$TAG^{commit}")" = "$HEAD" ]
@@ -210,35 +302,9 @@ jobs:
             git tag --annotate "$TAG" --message "Magic Modal $VERSION"
           fi
           node packages/modal/tools/release-integrity.mjs check --tag
-
-          if npm view "magic-modal@$VERSION" version >/dev/null 2>&1; then
-            echo "magic-modal@$VERSION is already published."
-          else
-            pnpm --filter magic-modal publish --no-git-checks --access public --provenance
-          fi
-
-          if npm view "react-native-magic-modal@$VERSION" version >/dev/null 2>&1; then
-            echo "react-native-magic-modal@$VERSION is already published."
-          else
-            pnpm --filter react-native-magic-modal publish --no-git-checks --access public --provenance
-          fi
-
-          # shellcheck disable=SC2016
-          MESSAGE='Renamed to `magic-modal`. This package still works and tracks every release, but new code should install `magic-modal` instead. See https://github.com/GSTJ/magic-modal'
-          npm deprecate "react-native-magic-modal@<$VERSION" "$MESSAGE"
-          git push origin "refs/tags/$TAG"
-
-      - name: 🏷 Publish GitHub release and verify registry state
-        if: steps.state.outputs.mode == 'publish'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          VERSION=${{ steps.state.outputs.version }}
-          TAG="magic-modal-$VERSION"
-          HEAD=$(git rev-parse HEAD)
-          node packages/modal/tools/release-integrity.mjs check --tag
           node packages/modal/tools/release-integrity.mjs notes > "$RUNNER_TEMP/release-notes.md"
+          gh auth setup-git
+          git push origin "refs/tags/$TAG"
 
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release edit "$TAG" --title "Magic Modal Release $VERSION" --notes-file "$RUNNER_TEMP/release-notes.md"
@@ -247,16 +313,14 @@ jobs:
           fi
 
           [ "$(gh api "repos/${{ github.repository }}/commits/$TAG" --jq .sha)" = "$HEAD" ]
-          [ "$(npm view "magic-modal@$VERSION" version)" = "$VERSION" ]
-          [ "$(npm view "react-native-magic-modal@$VERSION" version)" = "$VERSION" ]
-          [ "$(npm view "magic-modal@$VERSION" gitHead)" = "$HEAD" ]
-          [ "$(npm view "react-native-magic-modal@$VERSION" gitHead)" = "$HEAD" ]
 
       - name: 🧹 Remove the temporary publish branch
-        if: steps.state.outputs.mode == 'publish' && inputs.cleanup_branch != ''
+        if: inputs.cleanup_branch != ''
         env:
           CLEANUP_BRANCH: ${{ inputs.cleanup_branch }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          gh auth setup-git
           case "$CLEANUP_BRANCH" in
             chore/release-publish-*) git push origin --delete "$CLEANUP_BRANCH" ;;
             *) echo "::error::Refusing to delete unexpected branch $CLEANUP_BRANCH"; exit 1 ;;

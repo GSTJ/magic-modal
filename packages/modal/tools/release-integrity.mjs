@@ -3,6 +3,8 @@ import { execFileSync } from "node:child_process";
 import { appendFile, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
+import { releaseBoundary } from "./release-boundary.mjs";
+
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
 const modalManifestURL = new URL("../package.json", import.meta.url);
 const shimManifestURL = new URL(
@@ -110,25 +112,11 @@ const isPublished = async (name, version) => {
   return true;
 };
 
-const releaseBoundary = () => {
-  const candidates = [
-    tryGit("describe", "--tags", "--abbrev=0", "--match=magic-modal-*"),
-    tryGit("log", "-1", "--pretty=%H", "--grep=^chore(release)"),
-    tryGit("log", "-1", "--pretty=%H", "--grep=^chore(modal): sync version"),
-  ].filter(Boolean);
-
-  if (candidates.length === 0) return "";
-  return candidates
-    .map((candidate) => ({
-      candidate,
-      timestamp: Number(git("show", "-s", "--format=%ct", candidate)),
-    }))
-    .sort((left, right) => right.timestamp - left.timestamp)[0].candidate;
-};
-
 const commitsSinceBoundary = () => {
-  const boundary = releaseBoundary();
-  const range = boundary ? `${boundary}..HEAD` : "HEAD";
+  const boundary = releaseBoundary({
+    packageDirectory: fileURLToPath(new URL("../", import.meta.url)),
+  });
+  const range = `${boundary}..HEAD`;
   const output = tryGit("log", range, "--format=%H%x1f%an%x1f%s%x1f%b%x1e");
   if (!output) return [];
 

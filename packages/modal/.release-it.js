@@ -8,6 +8,14 @@ import createPreset from "conventional-changelog-conventionalcommits";
 // policy the release doesn't use — that file also explains what each `effect`
 // buys.
 import { PARSER_OPTS, TYPES as types } from "./tools/changelog-preset.mjs";
+import { releaseBoundary } from "./tools/release-boundary.mjs";
+
+// The 10.0.0 through 10.2.0 tags were cut on runner-only version commits, then
+// the version reached main through a later sync PR. Those tags therefore sit
+// before their real release boundary. Use whichever release marker is newest
+// for both bump calculation and changelog generation. Once the first exact
+// main tag ships, the tag and release commit resolve to the same SHA.
+const boundary = releaseBoundary({ packageDirectory: process.cwd() });
 
 // Squash-merging a PR puts the PR description in the commit body, and Renovate
 // PR descriptions quote the upstream project's changelog verbatim. Several
@@ -131,7 +139,13 @@ export default {
       //
       // Bump path only. The changelog generator takes `gitRawCommitsOpts`, not
       // this, so the rendered notes are unaffected.
-      commitsOpts: { format: "%B%n-hash-%n%H%n-authorName-%n%an" },
+      commitsOpts: {
+        from: boundary,
+        format: "%B%n-hash-%n%H%n-authorName-%n%an",
+      },
+      gitRawCommitsOpts: {
+        from: boundary,
+      },
       // Both paths through this plugin load the preset by name, which means
       // upstream's parser options, which means upstream's forgiving note
       // pattern. `tools/changelog-preset.mjs` explains what that pattern let
