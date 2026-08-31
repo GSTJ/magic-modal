@@ -84,7 +84,8 @@ export const MODAL_STYLESHEET = `.${MODAL_CLASS.portal},
 }
 
 .${MODAL_CLASS.boxNone},
-.${MODAL_CLASS.none} {
+.${MODAL_CLASS.none},
+.${MODAL_CLASS.none} * {
   pointer-events: none !important;
 }
 
@@ -92,9 +93,6 @@ export const MODAL_STYLESHEET = `.${MODAL_CLASS.portal},
   pointer-events: auto;
 }
 
-.${MODAL_CLASS.none} > * {
-  pointer-events: none;
-}
 `;
 
 /** Joins class names, skipping the ones a conditional turned off. */

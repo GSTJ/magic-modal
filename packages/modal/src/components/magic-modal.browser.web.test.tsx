@@ -251,6 +251,26 @@ describe("browser chrome", () => {
     expect(stackEntries()).toBe(0);
   });
 
+  it("ships recursive pointer isolation for every exiting descendant", async () => {
+    await render();
+    await show({ animationOutTiming: 300 });
+
+    await act(async () => {
+      magicModal.hideAll();
+    });
+
+    const button = byTestID("modal-button");
+    const stylesheet = [...query("style")].find(({ textContent }) =>
+      textContent?.includes("magic-modal-box-none"),
+    );
+
+    expect(stackEntries()).toBe(1);
+    expect(button?.closest(".magic-modal-none")).not.toBeNull();
+    expect(stylesheet?.textContent).toContain(".magic-modal-none *");
+
+    await finishAllAnimations();
+  });
+
   it("hands the dialog role down the stack the moment the top is dismissed", async () => {
     await render();
     await show({ accessibilityLabel: "First" });
