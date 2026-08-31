@@ -25,7 +25,7 @@
 //
 // Then it renders the same history through a sabotaged type list and fails if
 // *that* passes. An assertion that cannot fail is worth nothing. (4) carries
-// its own control of the same kind: the prose case is re-run through
+// its own control of the same kind: a bulleted footer is re-run through
 // upstream's default note pattern and has to come out a major there, which is
 // what makes it a regression test rather than a restatement.
 import { execFileSync } from "node:child_process";
@@ -313,7 +313,6 @@ const PROSE_BODY = [
 
 const notes = {
   prose: await bumpFor([PROSE_BODY]),
-  proseUnderDefaults: await bumpFor([PROSE_BODY], null),
   footer: await bumpFor([
     "feat: add a thing\n\nBREAKING CHANGE: the old API is gone",
   ]),
@@ -333,6 +332,10 @@ const notes = {
   bulletedFooter: await bumpFor([
     "feat: add a thing\n\n* BREAKING CHANGE: the old API is gone",
   ]),
+  bulletedFooterUnderDefaults: await bumpFor(
+    ["feat: add a thing\n\n* BREAKING CHANGE: the old API is gone"],
+    null,
+  ),
 };
 
 expect(
@@ -362,11 +365,11 @@ expect(
 );
 
 // Control for the four assertions above. Under upstream's default note pattern
-// the prose body has to come out a major, or the strict pattern is not what is
-// holding the line and these assertions prove nothing.
+// the bulleted footer has to come out a major, or the strict pattern is not
+// what is holding the line and these assertions prove nothing.
 expect(
-  `control: prose computes a major under the default note pattern (got ${notes.proseUnderDefaults})`,
-  notes.proseUnderDefaults === "major",
+  `control: a bulleted footer computes a major under the default note pattern (got ${notes.bulletedFooterUnderDefaults})`,
+  notes.bulletedFooterUnderDefaults === "major",
 );
 
 // The rendered changelog has to agree with the bump. A note the writer picks up
@@ -425,7 +428,7 @@ console.log(
   `changelog preset check passed (${COMMITS.length} synthetic commits, 3 breaking; bumps: feat!=${bumps.breaking}, feat=${bumps.feature}, fix=${bumps.fix}, changelog-only=${bumps.changelogOnly}, hidden-only=${bumps.hiddenOnly})`,
 );
 console.log(
-  `note pattern check passed (prose=${notes.prose}, footer=${notes.footer}, hyphen-footer=${notes.hyphenFooter}, marker=${notes.marker}, lowercase=${notes.lowercaseFooter}, indented=${notes.indentedFooter}, bulleted=${notes.bulletedFooter}; control: prose under upstream defaults=${notes.proseUnderDefaults})`,
+  `note pattern check passed (prose=${notes.prose}, footer=${notes.footer}, hyphen-footer=${notes.hyphenFooter}, marker=${notes.marker}, lowercase=${notes.lowercaseFooter}, indented=${notes.indentedFooter}, bulleted=${notes.bulletedFooter}; control: bulleted footer under upstream defaults=${notes.bulletedFooterUnderDefaults})`,
 );
 console.log(
   `negative control passed (hiding the visible types breaks ${sabotagedFailures.length} assertions: ${sabotagedFailures.join(", ")})`,
