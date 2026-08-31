@@ -10,29 +10,30 @@ on:
         type: string
         required: false
       cleanup_branch:
-        description: Temporary release branch to remove after verified publication.
+        description: Canonical publication branch to remove after verification.
         type: string
         required: false
 
 concurrency:
-  # Main pushes serialize release preparation. A prepared release is dispatched
-  # under its exact SHA, so it cannot be displaced by another pending main run.
   group: magic-modal-release-${{ inputs.expected_sha || 'main' }}
   cancel-in-progress: false
 
 jobs:
   release:
-    name: 🎉 Release
-    if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' || inputs.expected_sha != ''
+    name: 🎉 Verify release state
+    if: >-
+      github.event_name != 'workflow_dispatch' ||
+      (inputs.expected_sha == '' && github.ref == 'refs/heads/main') ||
+      (inputs.expected_sha != '' && startsWith(github.ref, 'refs/heads/chore/release-publish-'))
     runs-on: ubuntu-latest
     outputs:
+      base_sha: ${{ github.sha }}
       mode: ${{ steps.state.outputs.mode }}
-      release_sha: ${{ inputs.expected_sha || github.sha }}
+      next_version: ${{ steps.preparation.outputs.version }}
+      release_sha: ${{ steps.state.outputs.release_sha || inputs.expected_sha || github.sha }}
       version: ${{ steps.state.outputs.version }}
     permissions:
-      actions: write
-      contents: write
-      pull-requests: write
+      contents: read
 
     steps:
       - name: 🏗 Setup Repo
@@ -45,14 +46,24 @@ jobs:
       - name: 🔒 Verify manual release target
         if: github.event_name == 'workflow_dispatch' && inputs.expected_sha != ''
         env:
-          EXPECTED_SHA: ${{ inputs.expected_sha }}
+          CLEANUP_BRANCH: ${{ inputs.cleanup_branch }}
           EVENT_SHA: ${{ github.sha }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
           set -euo pipefail
+          printf '%s' "$EXPECTED_SHA" | grep -qE '^[0-9a-f]{40}$'
           [ "$EVENT_SHA" = "$EXPECTED_SHA" ]
           [ "$(git rev-parse HEAD)" = "$EXPECTED_SHA" ]
-          git fetch origin main
+          VERSION=$(node -p "require('./packages/modal/package.json').version")
+          [ "$VERSION" = "$(node -p "require('./packages/react-native-magic-modal/package.json').version")" ]
+          [ "$REF_NAME" = "chore/release-publish-$VERSION" ]
+          [ "$CLEANUP_BRANCH" = "$REF_NAME" ]
+          git fetch origin main --tags
           git merge-base --is-ancestor "$EXPECTED_SHA" origin/main
+          MAIN_VERSION=$(git show origin/main:packages/modal/package.json | node -e 'let text=""; process.stdin.on("data", chunk => text += chunk); process.stdin.on("end", () => console.log(JSON.parse(text).version))')
+          [ "$VERSION" = "$MAIN_VERSION" ]
+          git log -1 --pretty=%s | grep -qE "^chore\\(release\\): magic modal release v${VERSION//./\\.}( \\(#[0-9]+\\))?$"
 
       - name: 🏗 Setup PNPM
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
@@ -78,8 +89,6 @@ jobs:
       - name: 📦 Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Nothing below this step can see NPM_TOKEN. A merged commit has to pass
-      # the same gates as a PR before the publishing step receives it.
       - name: 🧪 Prove the release tree
         run: |
           pnpm run build
@@ -100,28 +109,184 @@ jobs:
         if: steps.state.outputs.mode == 'skip'
         run: echo "No qualifying package commits since the last release."
 
-      - name: 📝 Prepare version and changelog
+      - name: 📝 Prepare an allowlisted release patch
+        id: preparation
         if: steps.state.outputs.mode == 'prepare'
+        env:
+          SOURCE_SHA: ${{ github.sha }}
         run: |
+          set -euo pipefail
+          BEFORE=$(node -p "require('./packages/modal/package.json').version")
           git config user.name "Gabriel Taveira"
           git config user.email "gabrielstaveira@gmail.com"
           pnpm --filter magic-modal run release
           pnpm --dir packages/react-native-magic-modal exec node tools/sync-manifest.mjs --write
           git add packages/modal/package.json packages/modal/CHANGELOG.md packages/react-native-magic-modal/package.json
           git commit --amend --no-edit
+
+          AFTER=$(node -p "require('./packages/modal/package.json').version")
+          [ "$AFTER" != "$BEFORE" ]
+          [ "$AFTER" = "$(node -p "require('./packages/react-native-magic-modal/package.json').version")" ]
+          [ "$(git rev-parse HEAD^)" = "$SOURCE_SHA" ]
+          [ "$(git log -1 --format=%ae)" = "gabrielstaveira@gmail.com" ]
+          [ "$(git log -1 --format=%ce)" = "gabrielstaveira@gmail.com" ]
+          EXPECTED=$(printf '%s\n' packages/modal/CHANGELOG.md packages/modal/package.json packages/react-native-magic-modal/package.json | sort)
+          ACTUAL=$(git diff --name-only "$SOURCE_SHA" HEAD | sort)
+          [ "$ACTUAL" = "$EXPECTED" ]
           node packages/modal/tools/release-integrity.mjs check
+          [ -z "$(git status --porcelain)" ]
+
+          mkdir -p "$RUNNER_TEMP/release-preparation"
+          git diff --binary "$SOURCE_SHA" HEAD -- \
+            packages/modal/CHANGELOG.md \
+            packages/modal/package.json \
+            packages/react-native-magic-modal/package.json \
+            > "$RUNNER_TEMP/release-preparation/release.patch"
+          [ -s "$RUNNER_TEMP/release-preparation/release.patch" ]
+          echo "version=$AFTER" >> "$GITHUB_OUTPUT"
+
+      - name: 📤 Preserve the reviewed release patch
+        if: steps.state.outputs.mode == 'prepare'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: release-preparation-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/release-preparation/release.patch
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: 📦 Pack the reviewed release artifacts
+        if: >-
+          steps.state.outputs.mode == 'publish' &&
+          github.event_name == 'workflow_dispatch' &&
+          inputs.expected_sha != ''
+        run: node packages/modal/tools/release-artifacts.mjs pack "$RUNNER_TEMP/release-artifacts"
+
+      - name: 📤 Preserve the exact tarballs
+        if: >-
+          steps.state.outputs.mode == 'publish' &&
+          github.event_name == 'workflow_dispatch' &&
+          inputs.expected_sha != ''
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: release-artifacts-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/release-artifacts
+          if-no-files-found: error
+          retention-days: 1
+
+  release-pr:
+    name: 🔁 Review the prepared release
+    needs: release
+    if: needs.release.outputs.mode == 'prepare'
+    runs-on: ubuntu-latest
+    outputs:
+      merged_sha: ${{ steps.merge.outputs.sha }}
+      version: ${{ needs.release.outputs.next_version }}
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: 🏗 Setup Repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ needs.release.outputs.base_sha }}
+
+      - name: 📥 Download the release patch
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: release-preparation-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/release-preparation
+
+      - name: 🔒 Apply and verify the allowlisted patch
+        env:
+          BASE_SHA: ${{ needs.release.outputs.base_sha }}
+          VERSION: ${{ needs.release.outputs.next_version }}
+        run: |
+          set -euo pipefail
+          [ "$(git rev-parse HEAD)" = "$BASE_SHA" ]
+          git config core.hooksPath /dev/null
+          [ "$(git config --get core.hooksPath)" = "/dev/null" ]
+          git apply --check "$RUNNER_TEMP/release-preparation/release.patch"
+          git apply --index "$RUNNER_TEMP/release-preparation/release.patch"
+
+          EXPECTED=$(printf '%s\n' packages/modal/CHANGELOG.md packages/modal/package.json packages/react-native-magic-modal/package.json | sort)
+          ACTUAL=$(git diff --cached --name-only | sort)
+          [ "$ACTUAL" = "$EXPECTED" ]
+          node --input-type=module <<'NODE'
+          import assert from "node:assert/strict";
+          import { execFileSync } from "node:child_process";
+          import { readFileSync } from "node:fs";
+
+          const base = process.env.BASE_SHA;
+          const version = process.env.VERSION;
+          assert.match(version, /^\d+\.\d+\.\d+$/u);
+          const modal = JSON.parse(readFileSync("packages/modal/package.json", "utf8"));
+          const shim = JSON.parse(readFileSync("packages/react-native-magic-modal/package.json", "utf8"));
+          const changelog = readFileSync("packages/modal/CHANGELOG.md", "utf8");
+          const fromBase = path => execFileSync("git", ["show", `${base}:${path}`], { encoding: "utf8" });
+          const oldModal = JSON.parse(fromBase("packages/modal/package.json"));
+          const oldShim = JSON.parse(fromBase("packages/react-native-magic-modal/package.json"));
+          const oldChangelog = fromBase("packages/modal/CHANGELOG.md");
+          assert.equal(modal.version, version);
+          assert.equal(shim.version, version);
+          assert.equal(shim.dependencies?.["magic-modal"], "workspace:*");
+          assert.deepEqual({ ...modal, version: oldModal.version }, oldModal);
+          assert.deepEqual({ ...shim, version: oldShim.version }, oldShim);
+          const numeric = value => value.split(".").map(Number);
+          const before = numeric(oldModal.version);
+          const after = numeric(version);
+          assert.ok(after[0] > before[0] || (after[0] === before[0] && after[1] > before[1]) || (after[0] === before[0] && after[1] === before[1] && after[2] > before[2]), `${version} must advance ${oldModal.version}`);
+          assert.ok(changelog.endsWith(oldChangelog), "release preparation rewrote existing changelog history");
+          const addition = changelog.slice(0, -oldChangelog.length);
+          const escaped = version.replaceAll(".", String.raw`\.`);
+          assert.equal(changelog.match(new RegExp(`^## \\[${escaped}\\]`, "gmu"))?.length, 1);
+          assert.equal(changelog.match(/^## \[([^\]]+)\]/mu)?.[1], version);
+          assert.equal(addition.match(/^## \[([^\]]+)\]/mu)?.[1], version);
+          assert.ok(addition.split(/^## \[[^\]]+\].*$/mu)[1]?.trim(), `${version} needs release notes`);
+          NODE
+
+          git config user.name "Gabriel Taveira"
+          git config user.email "gabrielstaveira@gmail.com"
+          git commit -m "chore(release): magic modal release v$VERSION"
+          [ "$(git rev-parse HEAD^)" = "$BASE_SHA" ]
+          [ "$(git log -1 --format=%ae)" = "gabrielstaveira@gmail.com" ]
+          [ "$(git log -1 --format=%ce)" = "gabrielstaveira@gmail.com" ]
+          [ -z "$(git status --porcelain)" ]
+
+      - name: 🔎 Confirm main has not moved
+        id: base
+        env:
+          BASE_SHA: ${{ needs.release.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" = "$BASE_SHA" ]; then
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 🔄 Rescan the new main tree
+        if: steps.base.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run release.yml --ref main
 
       - name: 🔁 Open the prepared release PR
-        id: release-pr
-        if: steps.state.outputs.mode == 'prepare'
+        id: pull-request
+        if: steps.base.outputs.stale == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_ID: ${{ github.run_id }}
+          VERSION: ${{ needs.release.outputs.next_version }}
         run: |
           set -euo pipefail
-          VERSION=$(node -p "require('./packages/modal/package.json').version")
-          BRANCH="chore/release-$VERSION"
+          BRANCH="chore/release-$VERSION-$RUN_ID-${{ github.run_attempt }}"
           TITLE="chore(release): magic modal release v$VERSION"
+          HEAD=$(git rev-parse HEAD)
           BODY=$(printf '%s\n' \
             "## Summary" \
             "" \
@@ -131,101 +296,172 @@ jobs:
             "" \
             "- Bump both package manifests to the same version." \
             "- Generate the $VERSION changelog from the reviewed commit history." \
-            "- Publish only after this commit reaches main through the required checks." \
+            "- Publish only after this exact commit reaches main through the required checks." \
             "" \
             "## Testing steps" \
             "" \
-            "The Publish workflow ran the full build, lint, format, typecheck, test, doctor, audit, changelog, and release-integrity gates before opening this PR." \
+            "The Publish workflow ran the build, lint, format, typecheck, test, doctor, audit, changelog, and release-integrity gates before opening this PR." \
             "" \
             "Workflow proof: https://github.com/${{ github.repository }}/actions/runs/$RUN_ID")
 
+          [ "$(git config --get core.hooksPath)" = "/dev/null" ]
           gh auth setup-git
-          git fetch origin "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH" || true
-          git push --force-with-lease origin "HEAD:refs/heads/$BRANCH"
-          PR=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number')
-          if [ -z "$PR" ] || [ "$PR" = "null" ]; then
-            gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "$BODY"
-            PR=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number')
-          fi
-          echo "pr=$PR" >> "$GITHUB_OUTPUT"
+          git push origin "HEAD:refs/heads/$BRANCH"
+          URL=$(gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "$BODY")
+          PR=$(gh pr view "$URL" --json number --jq .number)
+          gh pr view "$PR" --json author,baseRefName,headRefName,headRefOid,headRepository,title > "$RUNNER_TEMP/release-pr.json"
+          jq -e \
+            --arg base main \
+            --arg branch "$BRANCH" \
+            --arg head "$HEAD" \
+            --arg repository "${{ github.repository }}" \
+            --arg title "$TITLE" \
+            '.baseRefName == $base and .headRefName == $branch and .headRefOid == $head and .headRepository.nameWithOwner == $repository and .title == $title and .author.is_bot == true and (.author.login == "app/github-actions" or .author.login == "github-actions")' \
+            "$RUNNER_TEMP/release-pr.json"
+          echo "number=$PR" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
 
-      - name: ✅ Release the parked check run
-        if: steps.release-pr.outputs.pr != ''
+      - name: ✅ Release parked check runs
+        if: steps.pull-request.outputs.number != ''
         uses: ./.github/actions/approve-parked-ci
         with:
-          pull-request: ${{ steps.release-pr.outputs.pr }}
+          pull-request: ${{ steps.pull-request.outputs.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🤝 Turn on auto-merge
-        if: steps.release-pr.outputs.pr != ''
+      - name: 🤝 Merge the exact checked release
+        id: merge
+        if: steps.pull-request.outputs.number != ''
         env:
+          BASE_SHA: ${{ needs.release.outputs.base_sha }}
+          BRANCH: ${{ steps.pull-request.outputs.branch }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR: ${{ steps.release-pr.outputs.pr }}
+          PR: ${{ steps.pull-request.outputs.number }}
+          VERSION: ${{ needs.release.outputs.next_version }}
         run: |
-          if gh pr merge "$PR" --auto --squash --delete-branch; then
+          set -euo pipefail
+          timeout 4h gh pr checks "$PR" --watch --fail-fast --interval 10
+          HEAD=$(git rev-parse HEAD)
+          TITLE="chore(release): magic modal release v$VERSION"
+
+          verify_pr() {
+            gh pr view "$PR" --json author,baseRefName,headRefName,headRefOid,headRepository,title > "$RUNNER_TEMP/release-pr.json"
+            jq -e \
+              --arg base main \
+              --arg branch "$BRANCH" \
+              --arg head "$HEAD" \
+              --arg repository "${{ github.repository }}" \
+              --arg title "$TITLE" \
+              '.baseRefName == $base and .headRefName == $branch and .headRefOid == $head and .headRepository.nameWithOwner == $repository and .title == $title and .author.is_bot == true and (.author.login == "app/github-actions" or .author.login == "github-actions")' \
+              "$RUNNER_TEMP/release-pr.json"
+          }
+
+          verify_pr
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+            gh pr close "$PR" --delete-branch --comment "Main moved while this was checking, so the release will be regenerated from the current tree."
+            gh workflow run release.yml --ref main
             exit 0
           fi
-          STATE=$(gh pr view "$PR" --json mergeStateStatus --jq .mergeStateStatus)
-          if [ "$STATE" = "CLEAN" ]; then
-            gh pr merge "$PR" --squash --delete-branch
-          else
-            echo "::error::Release PR #$PR is $STATE and auto-merge could not be enabled."
+
+          if ! gh pr merge "$PR" --squash --delete-branch --match-head-commit "$HEAD"; then
+            git fetch origin main
+            if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+              gh pr close "$PR" --delete-branch --comment "Main moved while this was checking, so the release will be regenerated from the current tree."
+              gh workflow run release.yml --ref main
+              exit 0
+            fi
             exit 1
           fi
 
-      # A PR merged by GITHUB_TOKEN does not emit another push workflow. Wait
-      # for the checked release PR, pin a temporary ref to its squash commit,
-      # and dispatch this workflow there. That also makes the provenance SHA
-      # identical to the commit the tag will name.
-      - name: ▶️ Dispatch publication from the merge commit
-        if: steps.release-pr.outputs.pr != ''
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR: ${{ steps.release-pr.outputs.pr }}
-        run: |
-          set -euo pipefail
-          for _attempt in $(seq 1 180); do
+          for _attempt in $(seq 1 30); do
             STATE=$(gh pr view "$PR" --json state --jq .state)
             if [ "$STATE" = "MERGED" ]; then
               SHA=$(gh pr view "$PR" --json mergeCommit --jq .mergeCommit.oid)
-              VERSION=$(gh pr view "$PR" --json title --jq '.title | capture("v(?<version>[0-9]+\\.[0-9]+\\.[0-9]+)$").version')
-              BRANCH="chore/release-publish-$VERSION"
+              printf '%s' "$SHA" | grep -qE '^[0-9a-f]{40}$'
               git fetch origin "$SHA"
-              git fetch origin "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH" || true
-              git push --force-with-lease origin "$SHA:refs/heads/$BRANCH"
-              gh workflow run release.yml --ref "$BRANCH" -f expected_sha="$SHA" -f cleanup_branch="$BRANCH"
+              [ "$(git show -s --format=%s "$SHA")" = "$TITLE (#$PR)" ]
+              [ "$(git show "$SHA:packages/modal/package.json" | node -e 'let text=""; process.stdin.on("data", chunk => text += chunk); process.stdin.on("end", () => console.log(JSON.parse(text).version))')" = "$VERSION" ]
+              echo "sha=$SHA" >> "$GITHUB_OUTPUT"
               exit 0
             fi
-            if [ "$STATE" = "CLOSED" ]; then
-              echo "::error::Release PR #$PR closed without merging."
-              exit 1
-            fi
-            sleep 10
+            sleep 2
           done
-          echo "::error::Release PR #$PR did not merge within 30 minutes."
+          echo "::error::Release PR #$PR did not report its merge commit."
           exit 1
 
-      - name: 📦 Pack the reviewed release artifacts
-        if: steps.state.outputs.mode == 'publish'
-        run: node packages/modal/tools/release-artifacts.mjs pack "$RUNNER_TEMP/release-artifacts"
+  handoff:
+    name: ▶️ Hand off canonical publication
+    needs: [release, release-pr]
+    if: >-
+      always() &&
+      needs.release.result == 'success' &&
+      (
+        needs.release.outputs.mode == 'recover' ||
+        (needs.release.outputs.mode == 'publish' && inputs.expected_sha == '') ||
+        needs.release-pr.outputs.merged_sha != ''
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
 
-      - name: 📤 Preserve the exact tarballs
-        if: steps.state.outputs.mode == 'publish'
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+    steps:
+      - name: 🏗 Setup Repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          name: release-artifacts
-          path: ${{ runner.temp }}/release-artifacts
-          if-no-files-found: error
-          retention-days: 1
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ needs.release-pr.outputs.merged_sha || needs.release.outputs.release_sha }}
+
+      - name: 🔒 Verify the exact release commit
+        env:
+          EXPECTED_SHA: ${{ needs.release-pr.outputs.merged_sha || needs.release.outputs.release_sha }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$EXPECTED_SHA" | grep -qE '^[0-9a-f]{40}$'
+          [ "$(git rev-parse HEAD)" = "$EXPECTED_SHA" ]
+          git config core.hooksPath /dev/null
+          [ "$(git config --get core.hooksPath)" = "/dev/null" ]
+          git fetch origin main --tags
+          git merge-base --is-ancestor "$EXPECTED_SHA" origin/main
+          VERSION=$(node -p "require('./packages/modal/package.json').version")
+          MAIN_VERSION=$(git show origin/main:packages/modal/package.json | node -e 'let text=""; process.stdin.on("data", chunk => text += chunk); process.stdin.on("end", () => console.log(JSON.parse(text).version))')
+          [ "$VERSION" = "$MAIN_VERSION" ]
+          git log -1 --pretty=%s | grep -qE "^chore\\(release\\): magic modal release v${VERSION//./\\.}( \\(#[0-9]+\\))?$"
+          node packages/modal/tools/release-integrity.mjs check
+
+      - name: ▶️ Dispatch the canonical release ref
+        env:
+          EXPECTED_SHA: ${{ needs.release-pr.outputs.merged_sha || needs.release.outputs.release_sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION=$(node -p "require('./packages/modal/package.json').version")
+          BRANCH="chore/release-publish-$VERSION"
+          REMOTE=$(git ls-remote origin "refs/heads/$BRANCH" | awk '{print $1}')
+          if [ -n "$REMOTE" ]; then
+            [ "$REMOTE" = "$EXPECTED_SHA" ]
+          else
+            [ "$(git config --get core.hooksPath)" = "/dev/null" ]
+            gh auth setup-git
+            git push origin "$EXPECTED_SHA:refs/heads/$BRANCH"
+          fi
+          gh workflow run release.yml --ref "$BRANCH" -f expected_sha="$EXPECTED_SHA" -f cleanup_branch="$BRANCH"
 
   publish:
     name: 📦 Publish verified tarballs
     needs: release
-    if: needs.release.outputs.mode == 'publish'
+    if: >-
+      needs.release.outputs.mode == 'publish' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.expected_sha != ''
     runs-on: ubuntu-latest
     environment: npm-release
+    concurrency:
+      group: magic-modal-npm-publish
+      cancel-in-progress: false
     permissions:
-      contents: write
+      contents: read
       id-token: write
 
     steps:
@@ -236,18 +472,6 @@ jobs:
           persist-credentials: false
           ref: ${{ needs.release.outputs.release_sha }}
 
-      - name: 🔒 Verify the merged release target
-        env:
-          EXPECTED_SHA: ${{ needs.release.outputs.release_sha }}
-          EVENT_SHA: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          printf '%s' "$EXPECTED_SHA" | grep -qE '^[0-9a-f]{40}$'
-          [ "$EVENT_SHA" = "$EXPECTED_SHA" ]
-          [ "$(git rev-parse HEAD)" = "$EXPECTED_SHA" ]
-          git fetch origin main
-          git merge-base --is-ancestor "$EXPECTED_SHA" origin/main
-
       - name: 🏗 Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
@@ -257,52 +481,196 @@ jobs:
       - name: 📥 Download the exact tarballs
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         with:
-          name: release-artifacts
+          name: release-artifacts-${{ github.run_attempt }}
           path: ${{ runner.temp }}/release-artifacts
 
       - name: 🔎 Verify artifact bytes and package manifests
         run: node packages/modal/tools/release-artifacts.mjs verify "$RUNNER_TEMP/release-artifacts"
 
-      - name: 📦 Publish both package names
+      - name: 🔒 Preflight both package names, tags, and dist-tags
+        env:
+          RELEASE_SHA: ${{ needs.release.outputs.release_sha }}
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          DIR="$RUNNER_TEMP/release-artifacts"
+          printf '%s' "$RELEASE_SHA" | grep -qE '^[0-9a-f]{40}$'
+          printf '%s' "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'
+          [ "$(git rev-parse HEAD)" = "$RELEASE_SHA" ]
+          [ "$GITHUB_REF_NAME" = "chore/release-publish-$VERSION" ]
+          git fetch origin main --tags
+          git merge-base --is-ancestor "$RELEASE_SHA" origin/main
+          MAIN_VERSION=$(git show origin/main:packages/modal/package.json | node -e 'let text=""; process.stdin.on("data", chunk => text += chunk); process.stdin.on("end", () => console.log(JSON.parse(text).version))')
+          [ "$VERSION" = "$MAIN_VERSION" ]
+
+          TAG="magic-modal-$VERSION"
+          REMOTE_TAG=$(git ls-remote origin "refs/tags/$TAG^{}" | awk '{print $1}')
+          if [ -z "$REMOTE_TAG" ]; then
+            REMOTE_TAG=$(git ls-remote origin "refs/tags/$TAG" | awk '{print $1}')
+          fi
+          if [ -n "$REMOTE_TAG" ]; then
+            [ "$REMOTE_TAG" = "$RELEASE_SHA" ]
+          fi
+
+          for NAME in magic-modal react-native-magic-modal; do
+            STATUS=$(node packages/modal/tools/release-artifacts.mjs status "$DIR" "$NAME")
+            case "$STATUS" in missing|matching) ;; *) exit 1 ;; esac
+            printf '%s\n' "$STATUS" > "$RUNNER_TEMP/$NAME.status"
+            LATEST=$(npm view "$NAME" dist-tags.latest --json | node -e 'let text=""; process.stdin.on("data", chunk => text += chunk); process.stdin.on("end", () => console.log(JSON.parse(text)))')
+            node --input-type=module - "$LATEST" "$VERSION" <<'NODE'
+          import assert from "node:assert/strict";
+          const [latest, target] = process.argv.slice(2);
+          const parse = value => {
+            assert.match(value, /^\d+\.\d+\.\d+$/u);
+            return value.split(".").map(Number);
+          };
+          const left = parse(latest);
+          const right = parse(target);
+          const comparison = left[0] - right[0] || left[1] - right[1] || left[2] - right[2];
+          assert.ok(comparison <= 0, `${latest} is newer than release ${target}`);
+          NODE
+          done
+
+      - name: 📦 Publish missing package names
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ needs.release.outputs.version }}
         run: |
           set -euo pipefail
           DIR="$RUNNER_TEMP/release-artifacts"
           for NAME in magic-modal react-native-magic-modal; do
-            STATUS=$(node packages/modal/tools/release-artifacts.mjs status "$DIR" "$NAME")
+            STATUS=$(cat "$RUNNER_TEMP/$NAME.status")
             if [ "$STATUS" = "matching" ]; then
-              echo "$NAME@${{ needs.release.outputs.version }} already has these exact bytes."
+              echo "$NAME@$VERSION already has these exact bytes and provenance."
               continue
             fi
             [ "$STATUS" = "missing" ]
-            FILE=$(node -e "const data=require('$DIR/release-artifacts.json'); console.log(data.artifacts.find((item) => item.name === '$NAME').file)")
+            FILE=$(node -e "const data=require('$DIR/release-artifacts.json'); console.log(data.artifacts.find(item => item.name === '$NAME').file)")
             npm publish "$DIR/$FILE" --access public --provenance --ignore-scripts
           done
 
-          # shellcheck disable=SC2016
-          MESSAGE='Renamed to `magic-modal`. This package still works and tracks every release, but new code should install `magic-modal` instead. See https://github.com/GSTJ/magic-modal'
-          npm deprecate "react-native-magic-modal@<${{ needs.release.outputs.version }}" "$MESSAGE"
-          node packages/modal/tools/release-artifacts.mjs registry "$DIR"
+      - name: 🔏 Verify registry bytes and provenance claims
+        run: node packages/modal/tools/release-artifacts.mjs registry "$RUNNER_TEMP/release-artifacts"
 
-      - name: 🏷 Publish GitHub release
+      - name: 🔏 Verify npm signatures and attestations
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.release.outputs.version }}
         run: |
           set -euo pipefail
-          VERSION=${{ needs.release.outputs.version }}
-          TAG="magic-modal-$VERSION"
-          HEAD=$(git rev-parse HEAD)
+          REGISTRY='https://registry.npmjs.org/'
+          AUDIT_DIR=$(mktemp -d "$RUNNER_TEMP/magic-modal-provenance.XXXXXX")
+          export NPM_CONFIG_USERCONFIG=/dev/null
+          export NPM_CONFIG_CACHE="$AUDIT_DIR/npm-cache"
+          npm install --global npm@11.17.0 --registry="$REGISTRY" --ignore-scripts --no-audit --no-fund
+          [ "$(npm --version)" = '11.17.0' ]
+          cd "$AUDIT_DIR"
+          npm init --yes >/dev/null
+          npm install --package-lock-only --save-exact --ignore-scripts --legacy-peer-deps \
+            --registry="$REGISTRY" --no-audit --no-fund \
+            "magic-modal@$VERSION" "react-native-magic-modal@$VERSION"
+          npm ci --ignore-scripts --legacy-peer-deps --omit=dev --omit=optional \
+            --registry="$REGISTRY" --no-audit --no-fund
+          if ! npm audit signatures --registry="$REGISTRY" --omit=dev --omit=optional \
+            --omit=peer --json --include-attestations > npm-signatures.json; then
+            cat npm-signatures.json >&2
+            exit 1
+          fi
+
+          REGISTRY="$REGISTRY" node <<'NODE'
+          const fs = require("node:fs");
+          const version = process.env.VERSION;
+          const registry = process.env.REGISTRY;
+          const targets = [["magic-modal", version], ["react-native-magic-modal", version]];
+          const expectedLocations = targets.map(([name]) => `node_modules/${name}`).sort();
+          const lock = JSON.parse(fs.readFileSync("package-lock.json", "utf8"));
+          const report = JSON.parse(fs.readFileSync("npm-signatures.json", "utf8"));
+          if (!Array.isArray(report.invalid) || !Array.isArray(report.missing) || !Array.isArray(report.verified)) throw new Error("unexpected npm audit signatures JSON schema");
+          if (report.invalid.length || report.missing.length) throw new Error(`npm signature audit failed: ${JSON.stringify({ invalid: report.invalid, missing: report.missing })}`);
+          const locations = Object.keys(lock.packages || {}).filter(Boolean).sort();
+          if (JSON.stringify(locations) !== JSON.stringify(expectedLocations)) throw new Error(`unexpected installed tree: ${JSON.stringify(locations)}`);
+          for (const [name, targetVersion] of targets) {
+            const location = `node_modules/${name}`;
+            const locked = lock.packages[location];
+            if (locked?.version !== targetVersion || typeof locked.integrity !== "string" || !locked.integrity.startsWith("sha512-")) throw new Error(`${name}@${targetVersion} is not exactly locked with sha512 integrity`);
+            const matches = report.verified.filter(entry => entry.name === name && entry.version === targetVersion && entry.location === location && entry.registry === registry);
+            if (matches.length !== 1) throw new Error(`${name}@${targetVersion} has no unique verified npm attestation`);
+            const verified = matches[0];
+            const predicateType = verified.attestations?.provenance?.predicateType;
+            const bundle = verified.attestationBundles?.find(entry => entry.predicateType === predicateType);
+            if (typeof predicateType !== "string" || !predicateType.startsWith("https://slsa.dev/provenance/") || !bundle?.bundle?.dsseEnvelope || !bundle.bundle.verificationMaterial) throw new Error(`${name}@${targetVersion} has no verified SLSA provenance bundle`);
+          }
+          NODE
+
+      - name: 🏷 Repair dist-tags and compatibility warnings
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          npm dist-tag add "magic-modal@$VERSION" latest
+          npm dist-tag add "react-native-magic-modal@$VERSION" latest
+          # shellcheck disable=SC2016
+          MESSAGE='Renamed to `magic-modal`. This package still works and tracks every release, but new code should install `magic-modal` instead. See https://github.com/GSTJ/magic-modal'
+          npm deprecate "react-native-magic-modal@<$VERSION" "$MESSAGE"
+          npm deprecate "react-native-magic-modal@11.0.0" "Accidental major, and no longer installable: its magic-modal@11.0.0 dependency was unpublished. Install react-native-magic-modal@10 or latest."
+
+      - name: ✅ Verify both latest dist-tags
+        env:
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          for NAME in magic-modal react-native-magic-modal; do
+            [ "$(npm view "$NAME" dist-tags.latest --json | node -e 'let text=""; process.stdin.on("data", chunk => text += chunk); process.stdin.on("end", () => console.log(JSON.parse(text)))')" = "$VERSION" ]
+          done
+
+  finalize:
+    name: 🏷 Finalize release and deployment
+    needs: [release, publish]
+    if: needs.publish.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+
+    steps:
+      - name: 🏗 Setup Repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ needs.release.outputs.release_sha }}
+
+      - name: 🏷 Prepare the immutable tag and release notes
+        env:
+          RELEASE_SHA: ${{ needs.release.outputs.release_sha }}
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          [ "$(git rev-parse HEAD)" = "$RELEASE_SHA" ]
+          git config core.hooksPath /dev/null
           git config user.name "Gabriel Taveira"
           git config user.email "gabrielstaveira@gmail.com"
-
+          TAG="magic-modal-$VERSION"
+          git fetch origin --tags
           if git rev-parse "$TAG^{commit}" >/dev/null 2>&1; then
-            [ "$(git rev-parse "$TAG^{commit}")" = "$HEAD" ]
+            [ "$(git rev-parse "$TAG^{commit}")" = "$RELEASE_SHA" ]
           else
             git tag --annotate "$TAG" --message "Magic Modal $VERSION"
           fi
           node packages/modal/tools/release-integrity.mjs check --tag
           node packages/modal/tools/release-integrity.mjs notes > "$RUNNER_TEMP/release-notes.md"
+          [ -s "$RUNNER_TEMP/release-notes.md" ]
+
+      - name: 🚀 Publish the GitHub release and resume deployment
+        env:
+          CLEANUP_BRANCH: ${{ inputs.cleanup_branch }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SHA: ${{ needs.release.outputs.release_sha }}
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          TAG="magic-modal-$VERSION"
+          [ "$(git config --get core.hooksPath)" = "/dev/null" ]
           gh auth setup-git
           git push origin "refs/tags/$TAG"
 
@@ -311,17 +679,18 @@ jobs:
           else
             gh release create "$TAG" --verify-tag --title "Magic Modal Release $VERSION" --notes-file "$RUNNER_TEMP/release-notes.md"
           fi
+          [ "$(gh api "repos/${{ github.repository }}/commits/$TAG" --jq .sha)" = "$RELEASE_SHA" ]
 
-          [ "$(gh api "repos/${{ github.repository }}/commits/$TAG" --jq .sha)" = "$HEAD" ]
+          git fetch origin main
+          gh workflow run docs.yml --ref main
+          if [ "$(git rev-parse origin/main)" != "$RELEASE_SHA" ]; then
+            gh workflow run release.yml --ref main
+          fi
 
-      - name: 🧹 Remove the temporary publish branch
-        if: inputs.cleanup_branch != ''
-        env:
-          CLEANUP_BRANCH: ${{ inputs.cleanup_branch }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh auth setup-git
-          case "$CLEANUP_BRANCH" in
-            chore/release-publish-*) git push origin --delete "$CLEANUP_BRANCH" ;;
-            *) echo "::error::Refusing to delete unexpected branch $CLEANUP_BRANCH"; exit 1 ;;
-          esac
+          [ "$CLEANUP_BRANCH" = "$GITHUB_REF_NAME" ]
+          [ "$CLEANUP_BRANCH" = "chore/release-publish-$VERSION" ]
+          REMOTE=$(git ls-remote origin "refs/heads/$CLEANUP_BRANCH" | awk '{print $1}')
+          if [ -n "$REMOTE" ]; then
+            [ "$REMOTE" = "$RELEASE_SHA" ]
+            git push --force-with-lease="refs/heads/$CLEANUP_BRANCH:$RELEASE_SHA" origin ":refs/heads/$CLEANUP_BRANCH"
+          fi

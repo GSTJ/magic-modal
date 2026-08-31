@@ -7,6 +7,14 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
 const metadataName = "release-artifacts.json";
+
+/** @typedef {{ dependencies?: Record<string, string>; name: string; version: string }} PackageManifest */
+/** @typedef {{ file: string; integrity: string; name: string; sha256: string; sha512: string; version: string }} ReleaseArtifact */
+/** @typedef {{ artifacts: ReleaseArtifact[]; commit: string; ref: string | null; repository: string | null; version: string; workflow: string }} ReleaseMetadata */
+/** @typedef {{ dist?: { attestations?: { url?: string }; integrity?: string } }} RegistryManifest */
+/** @typedef {{ attestations?: Array<{ bundle: { dsseEnvelope: { payload: string } }; predicateType?: string }> }} AttestationDocument */
+/** @typedef {{ predicate?: { buildDefinition?: { externalParameters?: { workflow?: { path?: string; ref?: string; repository?: string } }; resolvedDependencies?: Array<{ digest?: { gitCommit?: string } }> } }; predicateType?: string; subject?: Array<{ digest?: { sha512?: string }; name?: string }> }} ProvenanceStatement */
+
 const packages = [
   { name: "magic-modal", directory: join(repoRoot, "packages/modal") },
   {
@@ -15,12 +23,19 @@ const packages = [
   },
 ];
 
+/** @param {string[]} args */
 const git = (...args) =>
   execFileSync("git", args, { cwd: repoRoot, encoding: "utf8" }).trim();
 
+/**
+ * @param {string} algorithm
+ * @param {Buffer} bytes
+ * @param {import("node:crypto").BinaryToTextEncoding} encoding
+ */
 const digest = (algorithm, bytes, encoding) =>
   createHash(algorithm).update(bytes).digest(encoding);
 
+/** @param {string} file @returns {PackageManifest} */
 const tarManifest = (file) =>
   JSON.parse(
     execFileSync("tar", ["-xOf", file, "package/package.json"], {
@@ -28,9 +43,11 @@ const tarManifest = (file) =>
     }),
   );
 
+/** @param {string} file */
 const tarEntries = (file) =>
   execFileSync("tar", ["-tzf", file], { encoding: "utf8" }).trim().split("\n");
 
+/** @param {PackageManifest} manifest @param {string} name @param {string} version */
 const assertManifest = (manifest, name, version) => {
   assert.equal(
     manifest.name,
@@ -51,6 +68,13 @@ const assertManifest = (manifest, name, version) => {
   }
 };
 
+/**
+ * @param {string} directory
+ * @param {string} fileName
+ * @param {string} name
+ * @param {string} version
+ * @returns {Promise<ReleaseArtifact>}
+ */
 const inspectTarball = async (directory, fileName, name, version) => {
   const file = join(directory, fileName);
   const bytes = await readFile(file);
@@ -77,31 +101,46 @@ const inspectTarball = async (directory, fileName, name, version) => {
   };
 };
 
+/** @param {string} directory */
 const pack = async (directory) => {
   await mkdir(directory, { recursive: true });
+  /** @type {PackageManifest} */
   const modalManifest = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
   );
-  const artifacts = [];
 
   for (const item of packages) {
-    const file = `${item.name}-${modalManifest.version}.tgz`;
     execFileSync("pnpm", ["pack", "--pack-destination", directory], {
       cwd: item.directory,
       stdio: "inherit",
     });
-    artifacts.push(
-      await inspectTarball(directory, file, item.name, modalManifest.version),
-    );
   }
+  const artifacts = await Promise.all(
+    packages.map((item) =>
+      inspectTarball(
+        directory,
+        `${item.name}-${modalManifest.version}.tgz`,
+        item.name,
+        modalManifest.version,
+      ),
+    ),
+  );
 
+  // This release CLI runs only in GitHub Actions; no application env module is
+  // available or useful here.
+  // eslint-disable-next-line no-restricted-properties
+  const githubRepository = process.env.GITHUB_REPOSITORY;
+  // eslint-disable-next-line no-restricted-properties
+  const githubRef = process.env.GITHUB_REF;
+
+  /** @type {ReleaseMetadata} */
   const metadata = {
     version: modalManifest.version,
     commit: git("rev-parse", "HEAD"),
-    repository: process.env.GITHUB_REPOSITORY
-      ? `https://github.com/${process.env.GITHUB_REPOSITORY}`
+    repository: githubRepository
+      ? `https://github.com/${githubRepository}`
       : null,
-    ref: process.env.GITHUB_REF ?? null,
+    ref: githubRef ?? null,
     workflow: ".github/workflows/release.yml",
     artifacts,
   };
@@ -112,20 +151,24 @@ const pack = async (directory) => {
   console.log(`packed ${artifacts.length} verified release tarballs`);
 };
 
+/** @param {string} directory @returns {Promise<ReleaseMetadata>} */
 const verify = async (directory) => {
+  /** @type {ReleaseMetadata} */
   const metadata = JSON.parse(
     await readFile(join(directory, metadataName), "utf8"),
   );
-  const [modal, shim, changelog] = await Promise.all([
-    readFile(new URL("../package.json", import.meta.url), "utf8").then(
-      JSON.parse,
-    ),
+  const [modalText, shimText, changelog] = await Promise.all([
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(
       new URL("../../react-native-magic-modal/package.json", import.meta.url),
       "utf8",
-    ).then(JSON.parse),
+    ),
     readFile(new URL("../CHANGELOG.md", import.meta.url), "utf8"),
   ]);
+  /** @type {PackageManifest} */
+  const modal = JSON.parse(modalText);
+  /** @type {PackageManifest} */
+  const shim = JSON.parse(shimText);
   assert.match(
     metadata.commit,
     /^[0-9a-f]{40}$/u,
@@ -151,14 +194,25 @@ const verify = async (directory) => {
     metadata.version,
     "artifact version drifted from the changelog",
   );
+  const currentHeadings = changelog.match(
+    new RegExp(
+      `^## \\[${metadata.version.replaceAll(".", String.raw`\.`)}\\]`,
+      "gmu",
+    ),
+  );
+  assert.equal(
+    currentHeadings?.length,
+    1,
+    `the changelog must contain exactly one ${metadata.version} heading`,
+  );
   assert.equal(
     metadata.artifacts.length,
     packages.length,
     "artifact count drifted",
   );
   assert.deepEqual(
-    metadata.artifacts.map(({ name }) => name).toSorted(),
-    packages.map(({ name }) => name).toSorted(),
+    metadata.artifacts.map(({ name }) => name).sort(),
+    packages.map(({ name }) => name).sort(),
     "artifact package set drifted",
   );
   for (const artifact of metadata.artifacts) {
@@ -172,12 +226,15 @@ const verify = async (directory) => {
       `${artifact.name}-${metadata.version}.tgz`,
       `${artifact.name} has an unexpected artifact filename`,
     );
-    const actual = await inspectTarball(
-      directory,
-      artifact.file,
-      artifact.name,
-      metadata.version,
-    );
+  }
+  const actualArtifacts = await Promise.all(
+    metadata.artifacts.map((artifact) =>
+      inspectTarball(directory, artifact.file, artifact.name, metadata.version),
+    ),
+  );
+  for (const [index, actual] of actualArtifacts.entries()) {
+    const artifact = metadata.artifacts[index];
+    assert.ok(artifact, "artifact verification index drifted");
     assert.deepEqual(
       actual,
       artifact,
@@ -187,6 +244,7 @@ const verify = async (directory) => {
   return metadata;
 };
 
+/** @param {string} name @param {string} version @returns {Promise<RegistryManifest | null>} */
 const registryMetadata = async (name, version) => {
   const response = await fetch(
     `https://registry.npmjs.org/${encodeURIComponent(name)}/${version}`,
@@ -198,23 +256,30 @@ const registryMetadata = async (name, version) => {
       `npm registry returned ${response.status} for ${name}@${version}`,
     );
   }
-  return response.json();
+  return /** @type {Promise<RegistryManifest>} */ (response.json());
 };
 
+/**
+ * @param {RegistryManifest} published
+ * @param {ReleaseArtifact} artifact
+ * @param {ReleaseMetadata} metadata
+ */
 const verifyProvenance = async (published, artifact, metadata) => {
   const url = published.dist?.attestations?.url;
   if (!url) return false;
   const response = await fetch(url, { signal: AbortSignal.timeout(15_000) });
   if (!response.ok) return false;
-  const document = await response.json();
+  const document = /** @type {AttestationDocument} */ (await response.json());
   const attestation = document.attestations?.find(
     (item) => item.predicateType === "https://slsa.dev/provenance/v1",
   );
   if (!attestation) return false;
-  const statement = JSON.parse(
-    Buffer.from(attestation.bundle.dsseEnvelope.payload, "base64").toString(
-      "utf8",
-    ),
+  const statement = /** @type {ProvenanceStatement} */ (
+    JSON.parse(
+      Buffer.from(attestation.bundle.dsseEnvelope.payload, "base64").toString(
+        "utf8",
+      ),
+    )
   );
   const workflow =
     statement.predicate?.buildDefinition?.externalParameters?.workflow;
@@ -249,6 +314,7 @@ const verifyProvenance = async (published, artifact, metadata) => {
   return true;
 };
 
+/** @param {string} directory @param {string} name */
 const status = async (directory, name) => {
   const metadata = await verify(directory);
   const artifact = metadata.artifacts.find((item) => item.name === name);
@@ -263,41 +329,56 @@ const status = async (directory, name) => {
     artifact.integrity,
     `${name}@${metadata.version} exists with different bytes`,
   );
+  assert.equal(
+    await verifyProvenance(published, artifact, metadata),
+    true,
+    `${name}@${metadata.version} has no matching provenance`,
+  );
   console.log("matching");
 };
 
-const verifyRegistry = async (directory) => {
-  const metadata = await verify(directory);
-  for (let attempt = 1; attempt <= 20; attempt += 1) {
-    const results = await Promise.all(
-      metadata.artifacts.map(async (artifact) => ({
-        artifact,
-        published: await registryMetadata(artifact.name, metadata.version),
-      })),
-    );
-    let ready = true;
-    for (const { artifact, published } of results) {
-      if (!published) {
-        ready = false;
-        continue;
-      }
+/** @param {number} milliseconds */
+const delay = (milliseconds) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, milliseconds);
+  });
+
+/** @param {ReleaseMetadata} metadata @param {number} attempt */
+const verifyRegistryAttempt = async (metadata, attempt) => {
+  const results = await Promise.all(
+    metadata.artifacts.map(async (artifact) => ({
+      artifact,
+      published: await registryMetadata(artifact.name, metadata.version),
+    })),
+  );
+  const checks = await Promise.all(
+    results.map(({ artifact, published }) => {
+      if (!published) return false;
       assert.equal(
         published.dist?.integrity,
         artifact.integrity,
         `${artifact.name}@${metadata.version} exists with different bytes`,
       );
-      if (!(await verifyProvenance(published, artifact, metadata)))
-        ready = false;
-    }
-    if (ready) {
-      console.log(`registry bytes and provenance match ${metadata.version}`);
-      return;
-    }
-    await new Promise((done) => setTimeout(done, 3_000));
-  }
-  throw new Error(
-    `npm did not expose both provenance attestations within 60 seconds`,
+      return verifyProvenance(published, artifact, metadata);
+    }),
   );
+  if (checks.every(Boolean)) {
+    console.log(`registry bytes and provenance match ${metadata.version}`);
+    return;
+  }
+  if (attempt >= 20) {
+    throw new Error(
+      `npm did not expose both provenance attestations within 60 seconds`,
+    );
+  }
+  await delay(3_000);
+  return verifyRegistryAttempt(metadata, attempt + 1);
+};
+
+/** @param {string} directory */
+const verifyRegistry = async (directory) => {
+  const metadata = await verify(directory);
+  await verifyRegistryAttempt(metadata, 1);
 };
 
 const selfTest = () => {

@@ -42,12 +42,6 @@ const boundary = releaseBoundary({ packageDirectory: process.cwd() });
 // so nothing written in a PR description can forge it. Matching on the shape of
 // the prose instead would be a guessing game against whatever upstream writes
 // next.
-const BOT_AUTHORS = new Set([
-  "renovate[bot]",
-  "dependabot[bot]",
-  "github-actions[bot]",
-]);
-
 // `feat!:`, `fix(deps)!:`. A subject-line marker is deliberate in a way quoted
 // prose is not, so it keeps counting no matter who authored the commit. It is
 // also the escape hatch for the one case where a bot-authored commit really is
@@ -78,7 +72,7 @@ const BREAKING_MARKER = /^[a-zA-Z]+(\([^)]*\))?!:/;
  * @returns {ParsedCommit}
  */
 const dropQuotedNotes = (commit) => {
-  if (!BOT_AUTHORS.has(commit.authorName ?? "")) return commit;
+  if (!(commit.authorName ?? "").endsWith("[bot]")) return commit;
   if (BREAKING_MARKER.test(commit.header ?? "")) return commit;
   if (!commit.notes?.length) return commit;
   return { ...commit, notes: [] };

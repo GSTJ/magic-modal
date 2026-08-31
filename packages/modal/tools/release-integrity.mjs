@@ -4,6 +4,7 @@ import { appendFile, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 import { releaseBoundary } from "./release-boundary.mjs";
+import { TYPES } from "./release-types.mjs";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
 const modalManifestURL = new URL("../package.json", import.meta.url);
@@ -15,14 +16,12 @@ const rootManifestURL = new URL("../../../package.json", import.meta.url);
 const changelogURL = new URL("../CHANGELOG.md", import.meta.url);
 
 const VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u;
-const BREAKING_SUBJECT = /^[a-zA-Z]+(?:\([^)]*\))?!:/u;
 const BREAKING_FOOTER = /^BREAKING(?:-| )CHANGE: /mu;
-const BOT_AUTHORS = new Set([
-  "renovate[bot]",
-  "dependabot[bot]",
-  "github-actions[bot]",
-]);
+const CONVENTIONAL_SUBJECT = /^([a-zA-Z]+)(?:\(([^)]*)\))?(!)?:/u;
+/** @typedef {{ author: string; body: string; sha?: string; subject: string }} ReleaseCommit */
+/** @typedef {{ dependencies?: Record<string, string>; private?: boolean; version: string }} Manifest */
 
+/** @param {string[]} args */
 const git = (...args) =>
   execFileSync("git", args, {
     cwd: repoRoot,
@@ -30,6 +29,7 @@ const git = (...args) =>
     stdio: ["ignore", "pipe", "pipe"],
   }).trim();
 
+/** @param {string[]} args */
 const tryGit = (...args) => {
   try {
     return git(...args);
@@ -38,30 +38,42 @@ const tryGit = (...args) => {
   }
 };
 
+/** @param {URL} url @returns {Promise<Manifest>} */
 const readJSON = async (url) => JSON.parse(await readFile(url, "utf8"));
 
+/** @param {string} changelog */
 export const releaseHeadingVersion = (changelog) => {
   const match = changelog.match(/^## \[([^\]]+)\]/mu);
   return match?.[1] ?? "";
 };
 
+/** @param {string} changelog */
 export const releaseNotes = (changelog) => {
   const firstHeading = changelog.search(/^## \[[^\]]+\].*$/mu);
-  if (firstHeading < 0) return "";
+  if (firstHeading === -1) return "";
 
   const afterHeading = changelog.indexOf("\n", firstHeading);
-  if (afterHeading < 0) return "";
+  if (afterHeading === -1) return "";
 
   const remainder = changelog.slice(afterHeading + 1);
   const nextHeading = remainder.search(/^## \[[^\]]+\].*$/mu);
-  return (nextHeading < 0 ? remainder : remainder.slice(0, nextHeading)).trim();
+  return (
+    nextHeading === -1 ? remainder : remainder.slice(0, nextHeading)
+  ).trim();
 };
 
+/** @param {ReleaseCommit} commit */
 export const qualifiesForRelease = ({ author, subject, body }) => {
-  if (/\(modal\)/u.test(subject) || BREAKING_SUBJECT.test(subject)) return true;
-  return !BOT_AUTHORS.has(author) && BREAKING_FOOTER.test(body);
+  const parsed = subject.match(CONVENTIONAL_SUBJECT);
+  if (parsed?.[3] === "!") return true;
+  if (!author.endsWith("[bot]") && BREAKING_FOOTER.test(body)) return true;
+  if (parsed?.[2] !== "modal") return false;
+  return TYPES.some(
+    ({ effect, type }) => type === parsed[1] && effect === "bump",
+  );
 };
 
+/** @param {{ requireTag?: boolean }} [options] */
 const inspectTree = async ({ requireTag = false } = {}) => {
   const [root, modal, shim, changelog] = await Promise.all([
     readJSON(rootManifestURL),
@@ -87,6 +99,21 @@ const inspectTree = async ({ requireTag = false } = {}) => {
     modal.version,
     "the first changelog release must match both package manifests",
   );
+  const currentHeadings = changelog.match(
+    new RegExp(
+      `^## \\[${modal.version.replaceAll(".", String.raw`\.`)}\\]`,
+      "gmu",
+    ),
+  );
+  assert.equal(
+    currentHeadings?.length,
+    1,
+    `the changelog must contain exactly one ${modal.version} heading`,
+  );
+  assert.ok(
+    releaseNotes(changelog),
+    `the ${modal.version} changelog release must have notes`,
+  );
 
   const tag = `magic-modal-${modal.version}`;
   const head = git("rev-parse", "HEAD");
@@ -98,6 +125,7 @@ const inspectTree = async ({ requireTag = false } = {}) => {
   return { version: modal.version, tag, head, tagCommit, changelog };
 };
 
+/** @param {string} name @param {string} version */
 const isPublished = async (name, version) => {
   const response = await fetch(
     `https://registry.npmjs.org/${encodeURIComponent(name)}/${version}`,
@@ -117,26 +145,31 @@ const commitsSinceBoundary = () => {
     packageDirectory: fileURLToPath(new URL("../", import.meta.url)),
   });
   const range = `${boundary}..HEAD`;
-  const output = tryGit("log", range, "--format=%H%x1f%an%x1f%s%x1f%b%x1e");
+  const output = git("log", range, "--format=%H%x1f%an%x1f%s%x1f%b%x1e");
   if (!output) return [];
 
   return output
-    .split("\x1e")
+    .split("\u001E")
     .map((record) => record.trim())
     .filter(Boolean)
     .map((record) => {
-      const [sha, author, subject, ...body] = record.split("\x1f");
-      return { sha, author, subject, body: body.join("\x1f") };
+      const [sha = "", author = "", subject = "", ...body] =
+        record.split("\u001F");
+      return { sha, author, subject, body: body.join("\u001F") };
     });
 };
 
+/** @param {Record<string, string | number | boolean>} outputs */
 const writeOutputs = async (outputs) => {
   const text = Object.entries(outputs)
     .map(([key, value]) => `${key}=${value}`)
     .join("\n");
   console.log(text);
-  if (process.env.GITHUB_OUTPUT) {
-    await appendFile(process.env.GITHUB_OUTPUT, `${text}\n`);
+  // This is a release CLI, not application code. GitHub owns this path.
+  // eslint-disable-next-line no-restricted-properties
+  const githubOutput = process.env.GITHUB_OUTPUT;
+  if (githubOutput) {
+    await appendFile(githubOutput, `${text}\n`);
   }
 };
 
@@ -147,7 +180,7 @@ const classify = async () => {
     isPublished("react-native-magic-modal", state.version),
   ]);
   const subject = git("log", "-1", "--pretty=%s");
-  const escapedVersion = state.version.replaceAll(".", "\\.");
+  const escapedVersion = state.version.replaceAll(".", String.raw`\.`);
   const prepared = new RegExp(
     `^chore\\(release\\): magic modal release v${escapedVersion}(?: \\(#\\d+\\))?$`,
     "u",
@@ -169,9 +202,31 @@ const classify = async () => {
   }
 
   if (!modalPublished || !shimPublished) {
-    throw new Error(
-      `main is not a prepared release commit, but ${state.version} is missing from npm`,
+    const boundary = releaseBoundary({
+      packageDirectory: fileURLToPath(new URL("../", import.meta.url)),
+    });
+    const boundarySubject = git("show", "-s", "--format=%s", boundary);
+    assert.match(
+      boundarySubject,
+      new RegExp(
+        `^chore\\(release\\): magic modal release v${escapedVersion}(?: \\(#\\d+\\))?$`,
+        "u",
+      ),
+      `${state.version} is missing from npm, but its manifest boundary is not a prepared release commit`,
     );
+    if (state.tagCommit && state.tagCommit !== boundary) {
+      throw new Error(
+        `${state.tag} exists on ${state.tagCommit}, not release boundary ${boundary}`,
+      );
+    }
+    await writeOutputs({
+      mode: "recover",
+      release_sha: boundary,
+      version: state.version,
+      modal_published: modalPublished,
+      shim_published: shimPublished,
+    });
+    return;
   }
 
   const qualifying = commitsSinceBoundary().filter(qualifiesForRelease);
@@ -193,8 +248,32 @@ const selfTest = () => {
   );
   assert.equal(
     qualifiesForRelease({
+      author: "Gabriel",
+      subject: "docs(modal): update the guide",
+      body: "",
+    }),
+    false,
+  );
+  assert.equal(
+    qualifiesForRelease({
+      author: "Gabriel",
+      subject: "fix: unscoped package fix",
+      body: "",
+    }),
+    false,
+  );
+  assert.equal(
+    qualifiesForRelease({
       author: "renovate[bot]",
       subject: "chore(deps): bump",
+      body: "BREAKING CHANGE: quoted",
+    }),
+    false,
+  );
+  assert.equal(
+    qualifiesForRelease({
+      author: "seer[bot]",
+      subject: "fix: quote upstream notes",
       body: "BREAKING CHANGE: quoted",
     }),
     false,
