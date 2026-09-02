@@ -76,7 +76,7 @@
     "magic-oxlint-config": "^2.0.0",
     "magic-tsconfig": "^1.2.0",
     "oxfmt": "0.63.0",
-    "oxlint": "1.78.0",
+    "oxlint": "1.79.0",
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
