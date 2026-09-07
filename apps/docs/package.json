@@ -38,7 +38,7 @@
     "@types/mdx": "^2.0.14",
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
+    "@types/react-dom": "^19.2.5",
     "magic-oxfmt-config": "^1.2.0",
     "magic-oxlint-config": "^2.0.0",
     "magic-tsconfig": "^1.2.0",
