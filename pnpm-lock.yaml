@@ -9,7 +9,7 @@ overrides:
   metro-resolver: ^0.83.8
   metro-config: ^0.83.8
   '@expo/metro-runtime': 55.0.12
-  '@xmldom/xmldom@0.8.13': 0.8.15
+  '@xmldom/xmldom@0.8.13': 0.9.12
   '@xmldom/xmldom@0.9.10': 0.9.12
   undici: ^8.0.0
   lodash: ^4.18.0
@@ -4261,10 +4261,6 @@ packages:
 
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
-
-  '@xmldom/xmldom@0.8.15':
-    resolution: {integrity: sha512-/5NV/vDALVFDXgLmfsy9TRCBlKwO2LNBFzpzvb9iIj+jR+eSc6DLYYvVOdivT/jm7MtU6TebYuRmzEOI7w40UA==}
-    engines: {node: '>=10.0.0'}
 
   '@xmldom/xmldom@0.9.12':
     resolution: {integrity: sha512-5AXjrcMClTryPe9LgZrygpB1lj7s0S9E0+W+AHaVKAVyHanafK86iPSvG5xHVSp/jC+VH1UXu0TAEmY279xH7A==}
@@ -10922,7 +10918,7 @@ snapshots:
 
   '@expo/plist@0.5.4':
     dependencies:
-      '@xmldom/xmldom': 0.8.15
+      '@xmldom/xmldom': 0.9.12
       base64-js: 1.5.1
       xmlbuilder: 15.1.1
 
@@ -13437,8 +13433,6 @@ snapshots:
     dependencies:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
-
-  '@xmldom/xmldom@0.8.15': {}
 
   '@xmldom/xmldom@0.9.12': {}
 
