@@ -21,7 +21,7 @@ overrides:
   "fast-uri": "^3.1.6"
   "hono": "^4.12.34"
   "js-yaml@3.15.0": "5.4.0"
-  "js-yaml@4.3.0": "4.3.1"
+  "js-yaml@4.3.0": "4.3.2"
   "nanoid@3.3.16": "3.3.18"
   "qs": "^6.16.0"
   "uuid": "^14.0.0"
@@ -292,7 +292,8 @@ minimumReleaseAgeExclude:
   - "zbsearch@3.3.4"
   - "brace-expansion@5.0.9" # GHSA-rgw5-rvv9-x895
   - "hono@4.12.34" # GHSA-8j4g-w8fx-2239
-  - "js-yaml@3.15.1" # GHSA-5p4m-2wfm-xmqj
+  # Renovate security update: js-yaml@4.3.2
+  - "js-yaml@3.15.1 || 4.3.2" # GHSA-5p4m-2wfm-xmqj
   - "js-yaml@4.3.1" # GHSA-5p4m-2wfm-xmqj
   - "nanoid@3.3.18" # GHSA-2v37-7h3g-55p8
   - "qs@6.16.0" # GHSA-4mjr-xmp4-gh2g, GHSA-x5fp-wj9c-mxmx
