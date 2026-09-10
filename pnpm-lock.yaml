@@ -92,26 +92,26 @@ importers:
         specifier: 5.3.0
         version: 5.3.0
       fumadocs-core:
-        specifier: 16.14.4
-        version: 16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
+        specifier: 16.15.4
+        version: 16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
       fumadocs-mdx:
-        specifier: 15.2.3
-        version: 15.2.3(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)
+        specifier: 15.4.0
+        version: 15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)
       fumadocs-typescript:
         specifier: 5.3.0
-        version: 5.3.0(417ca81626641757f049abb2504ca3a8)
+        version: 5.3.0(2a50bad7387c8e49989ca53ab9d0deb1)
       fumadocs-ui:
-        specifier: npm:@fumadocs/base-ui@16.14.4
-        version: '@fumadocs/base-ui@16.14.4(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(tailwindcss@4.3.3)'
+        specifier: npm:@fumadocs/base-ui@16.15.4
+        version: '@fumadocs/base-ui@16.15.4(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(tailwindcss@4.3.3)'
       gsap:
         specifier: 3.15.0
         version: 3.15.0
       lucide-react:
         specifier: ^1.25.0
-        version: 1.31.0(react@19.2.0)
+        version: 1.34.0(react@19.2.0)
       magic-docs:
         specifier: 1.0.5
-        version: 1.0.5(c252546aa0a0935a3407e25b7415e211)
+        version: 1.0.5(da0f76d8071b603f0ea08b08e276aeda)
       magic-modal:
         specifier: workspace:*
         version: link:../../packages/modal
@@ -1664,12 +1664,12 @@ packages:
       '@types/react':
         optional: true
 
-  '@fumadocs/base-ui@16.14.4':
-    resolution: {integrity: sha512-lSugiCei2969YxAGH6YGEJiqnYRs25JTmrI7W1scFxGFCv0z9aNhzlwEcdIGhpsP0k/fagkQJw+HTbO3hNWd4w==}
+  '@fumadocs/base-ui@16.15.4':
+    resolution: {integrity: sha512-BcoUPoSbfX/uaUl2NgPn0IKOjqJCkwsWPP6z5uRlKSEdh4zbImwXf3k6+qJ3ULlVaFEY8hqfR2wn+Ya5vPKKEQ==}
     peerDependencies:
       '@types/mdx': '*'
       '@types/react': '*'
-      fumadocs-core: 16.14.4
+      fumadocs-core: 16.15.4
       next: 16.x.x
       react: ^19.2.0
       react-dom: ^19.2.0
@@ -4290,74 +4290,74 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@yuku-analyzer/binding-android-arm64@0.8.7':
-    resolution: {integrity: sha512-pzJ++UMCZEV4s6SP3Ryvj+snWP8s7aTXFkSXRyeBF4RSALftPzfqYssHdGOmOH2QnRAtyOhhg64tdjeSGJvYRg==}
+  '@yuku-analyzer/binding-android-arm64@0.9.3':
+    resolution: {integrity: sha512-6dOwkawiJYtUUBchfjrFo7poz460Yg+aQNgr4lHUPZ2fNW+llpMEZkbznTq25BEmmiBGPJr+L15dzTvR8zP4vQ==}
     cpu: [arm64]
     os: [android]
 
-  '@yuku-analyzer/binding-darwin-arm64@0.8.7':
-    resolution: {integrity: sha512-vymR7Us3i/HJvUxA1N5sKCrrn2mXw/Xvzbt66zlRyGPDmkUzFCrn34OqodR/zctmD1JhaFlv+Ur6xNNPRIid/w==}
+  '@yuku-analyzer/binding-darwin-arm64@0.9.3':
+    resolution: {integrity: sha512-DTRoWK7AqNfshN+DcCS/s4n86br0ZusISeXLZWWNuvnZ3b9LCVXdWRVPlnMpEwsmSH3c3QSwL7MAOPyEHMe+FA==}
     cpu: [arm64]
     os: [darwin]
 
-  '@yuku-analyzer/binding-darwin-x64@0.8.7':
-    resolution: {integrity: sha512-aX1xy6wJeI2QN/ipu9B6/dzz6RmHQ5+Ty6uyf9csqYZDnY4/U2GsDskYQIRysc2Cuh+GNnvuO5xCXxiqkmVEcw==}
+  '@yuku-analyzer/binding-darwin-x64@0.9.3':
+    resolution: {integrity: sha512-EWzaR0/AL3ikZfUiADG1SmbB+wF7GGhXFKhMWm3RbOTf+ATyEW7Fa9nsjo1K70pWEeVZHRm9MU4iq7LIUEEgfg==}
     cpu: [x64]
     os: [darwin]
 
-  '@yuku-analyzer/binding-freebsd-x64@0.8.7':
-    resolution: {integrity: sha512-5LT2KkjK0zBI2s3VoSyGPSs9Ey7rWPxWkCyFgZXoszQOkAk2z0biP+DLzb9zw6flmwwCCiyeZRqM65srfo8l1Q==}
+  '@yuku-analyzer/binding-freebsd-x64@0.9.3':
+    resolution: {integrity: sha512-Ao4/v+ppzIFVs2SldvBM2hc9NsijXNsKc1xUY+d+Nv20HrjRdm96HtrkIViw7zI5i6Ca77jkd8VbhWE8E4kgyg==}
     cpu: [x64]
     os: [freebsd]
 
-  '@yuku-analyzer/binding-linux-arm-gnu@0.8.7':
-    resolution: {integrity: sha512-4haNlVk624QoNSKIneoH9JKu5SvfD+Hkxg490HUS5pfFuWwoXT3zOmAdfwPMsSH0bNIkFO7GqtwDZ9EVpyzepw==}
+  '@yuku-analyzer/binding-linux-arm-gnu@0.9.3':
+    resolution: {integrity: sha512-EZc2H6bAyl4u3z48Jtqf4Un1657TpOkBWEmSdPCY1tHCO4YUFaNAz4dPA93yWgo5t38oRQT9UoXlwse/4aLtxw==}
     cpu: [arm]
     os: [linux]
     libc: [glibc]
 
-  '@yuku-analyzer/binding-linux-arm-musl@0.8.7':
-    resolution: {integrity: sha512-7HwJHVFtrufB5qHHL1PSDPr/j6uoNLwbwxa04QzsbpcbbzfDUbT37loHPu5u0NuetRUlV+TqXDlX6OpXcM8hKQ==}
+  '@yuku-analyzer/binding-linux-arm-musl@0.9.3':
+    resolution: {integrity: sha512-pKny3wEa2Xl4kPoqNU8fO5NCzcp9VgMAkLpN3GZ5TOkdz23ppuzUqddlhad43/9puxfckX5aZqfxML/1vGoxBw==}
     cpu: [arm]
     os: [linux]
     libc: [musl]
 
-  '@yuku-analyzer/binding-linux-arm64-gnu@0.8.7':
-    resolution: {integrity: sha512-yUEgxEPuDVBO+nkDw8qbssYA8oHu82Q0da+C7rGyVplmjlKa5DhBnMMagTEjFZx4jNDVWnGHJreUCSeGL0x/gQ==}
+  '@yuku-analyzer/binding-linux-arm64-gnu@0.9.3':
+    resolution: {integrity: sha512-bfpsIupfbX7N4ueSjo3Zm+Mob0q7MjrZX+INMGcPjNnXBcyKjkzrTotkqbEbwgfiNKhqyDVjynwsh64xsv5IPg==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@yuku-analyzer/binding-linux-arm64-musl@0.8.7':
-    resolution: {integrity: sha512-2X7EwxPbgdNRqgMwtxOnNOGEmdm1RS8PD2Q5cOxj8cEZD4fy7yHHeSDoEdBOyrJtHzbG6jQB6CeReO1okb/S7Q==}
+  '@yuku-analyzer/binding-linux-arm64-musl@0.9.3':
+    resolution: {integrity: sha512-Q+AAUrrsgYgHb0/Wrm+HnSKN7xOpkC+6Y2812dZw5/rrSX7+qjRjJ+3uNnCZlkHpH3Hy7WXbLIa/IncP4bcHQA==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@yuku-analyzer/binding-linux-x64-gnu@0.8.7':
-    resolution: {integrity: sha512-k/iQFK1gAvaHLzXXZ3/+g48wT5YB6MfikPb+juGCd9HzyPMUSBCy44rz6nT+xoWnnxmBoeBUywA4CvWCWZFTtg==}
+  '@yuku-analyzer/binding-linux-x64-gnu@0.9.3':
+    resolution: {integrity: sha512-ZQyjmSDRHTkDlddrzmIG1/nMUYDZC21XUguzQ4qvSWtfq6CsfJvIDFBPfJ03YDNQ+wR0px9Ly/xAa8VC0p9rHQ==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@yuku-analyzer/binding-linux-x64-musl@0.8.7':
-    resolution: {integrity: sha512-gTfYHx3cg8FERTYsg1dQrQFTutcWJ7wTp8YToyAJnZMbUCkcyuwUiWNYaEHyF0xIb+PsG7HfD+BLWhRRom5qKg==}
+  '@yuku-analyzer/binding-linux-x64-musl@0.9.3':
+    resolution: {integrity: sha512-EIYzThB5pI3BiZHFNYyY8nMQ38z9l8/kT8uYvfYVpZ9TNEC0YgqX95MH61l9RILCYFDx+DbLoGajGY55JFvb6Q==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@yuku-analyzer/binding-win32-arm64@0.8.7':
-    resolution: {integrity: sha512-XDCWZZztOvdTtPNaU5EzrrV0dmMugdZ+Qdq5INeiGhGW5hD0TuCBIIXK7wTmRM6NcKarGlyBP5SYkiAuw6+slg==}
+  '@yuku-analyzer/binding-win32-arm64@0.9.3':
+    resolution: {integrity: sha512-KF+Ho3jtjikfPYJ76NL1KiPYwF+0UjnsASX0k461BZ1Er4pRQG39o8WvsngLT+fDg6JxB3v5J+ScDrto29RVnA==}
     cpu: [arm64]
     os: [win32]
 
-  '@yuku-analyzer/binding-win32-x64@0.8.7':
-    resolution: {integrity: sha512-VtSH1pWuk3bo+BiUAtzYa4Ku1r/10CO14QvkGpRhDcFck8sIf7ox+wiucyKNKcf+srWCYxR1hO+wn5N3BdtFdw==}
+  '@yuku-analyzer/binding-win32-x64@0.9.3':
+    resolution: {integrity: sha512-4pdUfYVYPf05vyygvWiXsiI/tdPqn5bBiHs7c1TBIm3Kx7/w5pq++myNQ/8CUH/Proz+1kHtCr/lDJF9k67fqg==}
     cpu: [x64]
     os: [win32]
 
-  '@yuku-toolchain/types@0.8.7':
-    resolution: {integrity: sha512-2Z53dNxAJL6UvFoIrDZvYf3zlO8s4VJK4O2hhaB4mXVwwpX/7ajtss3cmfqKvamlNLWyt9FSWs4eoYdlbxpnHA==}
+  '@yuku-toolchain/types@0.9.3':
+    resolution: {integrity: sha512-rFE+5P4g2wxko5C85MugJOlVjBHEQq87dIkhLkniLXLp63PEtgaFjD954i5HXlfnyzLxPcZHsSOVDVgmo1HToA==}
 
   '@zeit/schemas@2.36.0':
     resolution: {integrity: sha512-7kjMwcChYEzMKjeex9ZFXkt1AyNov9R5HZtjBKVsmVpw7pa7ZtlCGvCBC2vnnXctaYN+aRI61HjIqeetZW5ROg==}
@@ -5905,8 +5905,8 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
 
-  framer-motion@13.1.0:
-    resolution: {integrity: sha512-QSZrF0Id3QGuHJ+OL+9PSY9pk86C8ERFalwAGSchzTm65+ZoGH/RM26lmEARLljcHj2lqhv0jZOOks+EI3COOw==}
+  framer-motion@13.1.1:
+    resolution: {integrity: sha512-B/xn2TPS4f61cEBLFjiYlQFnBZUW1YVj/LM+C+N4OP8Rs95VLEI2ot/RlfBg111la/EiyECFaJJi/A3FWA8MUA==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -5943,8 +5943,8 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
-  fumadocs-core@16.14.4:
-    resolution: {integrity: sha512-vD1gVDwYKATW54D3tD/jPcB7GGipJ8qPXa85gCV3HNhC8u8SkbJdvu/QYklo6gTpULy+J/Aj+5vlg96zE39+Yg==}
+  fumadocs-core@16.15.4:
+    resolution: {integrity: sha512-kdOuM0tvHkLWajnDu73BmtryPuUq4xsu610ssl1YMAm9fYF7BRmvYxx2apHbyf2Lt+7w8OEiWDTmB8Ja3zqp4Q==}
     peerDependencies:
       '@mdx-js/mdx': '*'
       '@mixedbread/sdk': 0.x.x
@@ -6002,20 +6002,20 @@ packages:
       zod:
         optional: true
 
-  fumadocs-mdx@15.2.3:
-    resolution: {integrity: sha512-zulK4WKXZcnbiipdvWtKcBClZn8/RekIjZu+/MmuMX3lpiXki485ABhJiJqFQmtD8W59WBN+V/4ydr4TvSoLkQ==}
+  fumadocs-mdx@15.4.0:
+    resolution: {integrity: sha512-bJCQfsckKUQ4x2pyz8OdASEAARVMB49kOej7njaJ3t+tYsP1HnwkmqiO8e/jdQHcv6JH3XkXWidTho3ZC/WBcA==}
     hasBin: true
     peerDependencies:
       '@fumadocs/satteri': 0.x.x
       '@types/mdast': '*'
       '@types/mdx': '*'
       '@types/react': '*'
-      fumadocs-core: ^16.7.0
+      fumadocs-core: ^16.15.3
       mdast-util-directive: '*'
       next: ^15.3.0 || ^16.0.0
       react: ^19.2.0
       rolldown: '*'
-      satteri: ^0.9.4
+      satteri: ^0.10.5
       vite: 7.x.x || 8.x.x
     peerDependenciesMeta:
       '@fumadocs/satteri':
@@ -7107,8 +7107,8 @@ packages:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
 
-  lucide-react@1.31.0:
-    resolution: {integrity: sha512-G8u2eEtoHUnUa9f8lbvqDhCiORMnYLdUEo06EEG9MQvHQrInKcX3Pa2TH39MM5qyzRcWETxB0+aOwAPI1g1kEg==}
+  lucide-react@1.34.0:
+    resolution: {integrity: sha512-vnjGJNI7Htk5+oWW8gXGuaLgwgAb0T6/iZbBrp9JCfRFwdNWZ0YTm3eyxjOLgwN6r8iyAf3UA70zNmBRBNv7yg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -7520,14 +7520,14 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  motion-dom@13.0.0:
-    resolution: {integrity: sha512-Xk+SJas70uMAUIApg+m3lZDShxI3LBFHq7mFGbBKoRXc2PVPDyAKmzN64Bbzt4CZdP/CItTiJxWtn4TA0v53Ng==}
+  motion-dom@13.1.1:
+    resolution: {integrity: sha512-XSf8VYWSB6G/0IY3rWVbyLcxWXtAVHkN1PQE2agTaCv3u8RGvbwu56TyyR/MNzBqqNavEBTZzErcxI1TxBrjcA==}
 
   motion-utils@13.0.0:
     resolution: {integrity: sha512-7DnN7TmbLcYXcG4RVadXIihWlyuM9afoUww8Y5Agg431kGKiuL2/OMyP4mJ5wLz+pvN3t5ySClLOaVXJ+wekRQ==}
 
-  motion@13.1.0:
-    resolution: {integrity: sha512-qtvscq59uCPdWnNW4SdSkrxR+BS/QYsa923bx7ocA+4p+ZGNbbVQwkSnG4aukB81QWjtl3AxX36plxNyZLmHCA==}
+  motion@13.1.1:
+    resolution: {integrity: sha512-WNZoK6xiF+kkTqkZ5K7FDDh6A8BG4i5Hc7KXtW8gtTxkpJFds+hIOrDaQGKjQj/AE/i4hJqAaUHEqp/Qo02y6Q==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -7970,8 +7970,8 @@ packages:
     resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
     engines: {node: '>=8.6'}
 
-  picomatch@4.0.5:
-    resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
+  picomatch@4.0.7:
+    resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
   pirates@4.0.7:
@@ -9598,11 +9598,11 @@ packages:
     resolution: {integrity: sha512-xYqdZFUK/VYazNl/oCDYN+3WloWQwMfZxBoiNt6qNyk+xfOdi598muWE42rNZFp1kNOiqW936q5RhUdnpqElSg==}
     engines: {node: '>=18'}
 
-  yuku-analyzer@0.8.7:
-    resolution: {integrity: sha512-nyPXcwwRPEggJqxIP28GeLKPjk9oGUuBlS4I0KfFrezNe93Ie9WIlOYRI42bo+MmZoxH238XHoPy0IZdwZIBxA==}
+  yuku-analyzer@0.9.3:
+    resolution: {integrity: sha512-2xSREErroEF8boH7XyKfVO5hbjP6PCIYYnLR2Abg6PGJaFVbETLucmbzIebBOHeyY4GO6VXzloTuhUldR/zyew==}
 
-  yuku-ast@0.8.7:
-    resolution: {integrity: sha512-h6+4bDfyootiMB9vckk5uKo5r5j0GHrkr17FQTDNfEsFT3DWlN9uu1HJwQwc64pgmLCI945fWM3lbTIqxjT3GQ==}
+  yuku-ast@0.9.3:
+    resolution: {integrity: sha512-Kt0PXlPCXdKF1fWFTl7N3DaxsVk6DHF8VAXHJMkwPtJnWYgbx20pYgGSweuC/86mIM7k1NUITQ4JffgOLUWTCw==}
 
   zbsearch@4.0.0:
     resolution: {integrity: sha512-gm4zfO31n2ZdruTTRQoWVWO4Q2+zrDt2GlrvIc+5JulRQNAm4IanCxER82vQ7Ug96FYkGqWUJBXFe1kGAcDWaQ==}
@@ -10404,11 +10404,11 @@ snapshots:
       enquirer: 2.4.1
       env-paths: 2.2.1
       execa: 5.1.1
-      fdir: 6.5.0(picomatch@4.0.5)
+      fdir: 6.5.0(picomatch@4.0.7)
       ignore: 5.3.2
       object-treeify: 1.1.33
       open: 8.4.2
-      picomatch: 4.0.5
+      picomatch: 4.0.7
       systeminformation: 5.33.1
       undici: 8.10.0
       which: 4.0.0
@@ -10683,7 +10683,7 @@ snapshots:
       node-forge: 1.4.0
       npm-package-arg: 11.0.3
       ora: 3.4.0
-      picomatch: 4.0.5
+      picomatch: 4.0.7
       pretty-format: 29.7.0
       progress: 2.0.3
       prompts: 2.4.2
@@ -10870,7 +10870,7 @@ snapshots:
       hermes-parser: 0.32.1
       jsc-safe-url: 0.2.4
       lightningcss: 1.33.0
-      picomatch: 4.0.5
+      picomatch: 4.0.7
       postcss: 8.5.26
       resolve-from: 5.0.0
     optionalDependencies:
@@ -11034,16 +11034,16 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.18
 
-  '@fumadocs/base-ui@16.14.4(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(tailwindcss@4.3.3)':
+  '@fumadocs/base-ui@16.15.4(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(tailwindcss@4.3.3)':
     dependencies:
       '@base-ui/react': 1.7.0(@types/react@19.2.18)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@fuma-translate/react': 1.0.2(@types/react@19.2.18)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@fumadocs/tailwind': 0.1.1(tailwindcss@4.3.3)
       class-variance-authority: 0.7.1
       cnfast: 0.1.0
-      fumadocs-core: 16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
-      lucide-react: 1.31.0(react@19.2.0)
-      motion: 13.1.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      fumadocs-core: 16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
+      lucide-react: 1.34.0(react@19.2.0)
+      motion: 13.1.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-themes: 0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
@@ -12731,10 +12731,10 @@ snapshots:
       '@rollup/pluginutils': 5.4.0(rollup@4.62.4)
       commondir: 1.0.1
       estree-walker: 2.0.2
-      fdir: 6.5.0(picomatch@4.0.5)
+      fdir: 6.5.0(picomatch@4.0.7)
       is-reference: 1.2.1
       magic-string: 0.30.21
-      picomatch: 4.0.5
+      picomatch: 4.0.7
     optionalDependencies:
       rollup: 4.62.4
 
@@ -12771,7 +12771,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.9
       estree-walker: 2.0.2
-      picomatch: 4.0.5
+      picomatch: 4.0.7
     optionalDependencies:
       rollup: 4.62.4
 
@@ -13473,43 +13473,43 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@yuku-analyzer/binding-android-arm64@0.8.7':
+  '@yuku-analyzer/binding-android-arm64@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-darwin-arm64@0.8.7':
+  '@yuku-analyzer/binding-darwin-arm64@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-darwin-x64@0.8.7':
+  '@yuku-analyzer/binding-darwin-x64@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-freebsd-x64@0.8.7':
+  '@yuku-analyzer/binding-freebsd-x64@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-linux-arm-gnu@0.8.7':
+  '@yuku-analyzer/binding-linux-arm-gnu@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-linux-arm-musl@0.8.7':
+  '@yuku-analyzer/binding-linux-arm-musl@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-linux-arm64-gnu@0.8.7':
+  '@yuku-analyzer/binding-linux-arm64-gnu@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-linux-arm64-musl@0.8.7':
+  '@yuku-analyzer/binding-linux-arm64-musl@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-linux-x64-gnu@0.8.7':
+  '@yuku-analyzer/binding-linux-x64-gnu@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-linux-x64-musl@0.8.7':
+  '@yuku-analyzer/binding-linux-x64-musl@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-win32-arm64@0.8.7':
+  '@yuku-analyzer/binding-win32-arm64@0.9.3':
     optional: true
 
-  '@yuku-analyzer/binding-win32-x64@0.8.7':
+  '@yuku-analyzer/binding-win32-x64@0.9.3':
     optional: true
 
-  '@yuku-toolchain/types@0.8.7': {}
+  '@yuku-toolchain/types@0.9.3': {}
 
   '@zeit/schemas@2.36.0': {}
 
@@ -13906,7 +13906,7 @@ snapshots:
       clean-css: 5.3.3
       magic-string: 0.30.21
       nanospinner: 1.2.2
-      picomatch: 4.0.5
+      picomatch: 4.0.7
       piscina: 5.3.0
       pretty-bytes: 7.1.1
       rollup: 4.62.4
@@ -15175,9 +15175,9 @@ snapshots:
     dependencies:
       walk-up-path: 4.0.0
 
-  fdir@6.5.0(picomatch@4.0.5):
+  fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
-      picomatch: 4.0.5
+      picomatch: 4.0.7
 
   fetch-nodeshim@0.4.10: {}
 
@@ -15271,9 +15271,9 @@ snapshots:
 
   forwarded@0.2.0: {}
 
-  framer-motion@13.1.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  framer-motion@13.1.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
-      motion-dom: 13.0.0
+      motion-dom: 13.1.1
       motion-utils: 13.0.0
       tslib: 2.8.1
     optionalDependencies:
@@ -15304,7 +15304,7 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
-  fumadocs-core@16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3):
+  fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3):
     dependencies:
       '@fumari/image-size': 0.1.0
       estree-util-value-to-estree: 3.5.0
@@ -15331,7 +15331,7 @@ snapshots:
       '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
       '@types/react': 19.2.18
-      lucide-react: 1.31.0(react@19.2.0)
+      lucide-react: 1.34.0(react@19.2.0)
       next: 16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
@@ -15339,19 +15339,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-mdx@15.2.3(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(supports-color@8.1.1):
+  fumadocs-mdx@15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(supports-color@8.1.1):
     dependencies:
       '@mdx-js/mdx': 3.1.1(supports-color@8.1.1)
       '@standard-schema/spec': 1.1.0
       chokidar: 5.0.0
       esbuild: 0.28.2
       estree-util-value-to-estree: 3.5.0
-      fumadocs-core: 16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
+      fumadocs-core: 16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
       github-slugger: 2.0.0
       magic-string: 1.2.3
       mdast-util-mdx: 3.0.0(supports-color@8.1.1)
       picocolors: 1.1.1
-      picomatch: 4.0.5
+      picomatch: 4.0.7
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
       unified: 11.0.5
@@ -15359,7 +15359,7 @@ snapshots:
       unist-util-visit: 5.1.0
       vfile: 6.0.3
       yaml: 2.9.0
-      yuku-analyzer: 0.8.7
+      yuku-analyzer: 0.9.3
       zod: 4.4.3
     optionalDependencies:
       '@types/mdast': 4.0.4
@@ -15370,10 +15370,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-typescript@5.3.0(417ca81626641757f049abb2504ca3a8):
+  fumadocs-typescript@5.3.0(2a50bad7387c8e49989ca53ab9d0deb1):
     dependencies:
       estree-util-value-to-estree: 3.5.0
-      fumadocs-core: 16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
+      fumadocs-core: 16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
       hast-util-to-estree: 3.1.3(supports-color@8.1.1)
       hast-util-to-jsx-runtime: 2.3.6(supports-color@8.1.1)
       react: 19.2.0
@@ -15389,7 +15389,7 @@ snapshots:
       '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
       '@types/react': 19.2.18
-      fumadocs-ui: '@fumadocs/base-ui@16.14.4(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(tailwindcss@4.3.3)'
+      fumadocs-ui: '@fumadocs/base-ui@16.15.4(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(tailwindcss@4.3.3)'
     transitivePeerDependencies:
       - supports-color
 
@@ -16659,7 +16659,7 @@ snapshots:
 
   lru-cache@7.18.3: {}
 
-  lucide-react@1.31.0(react@19.2.0):
+  lucide-react@1.34.0(react@19.2.0):
     dependencies:
       react: 19.2.0
 
@@ -16669,13 +16669,13 @@ snapshots:
     dependencies:
       ts-morph: 28.0.0
 
-  magic-docs@1.0.5(c252546aa0a0935a3407e25b7415e211):
+  magic-docs@1.0.5(da0f76d8071b603f0ea08b08e276aeda):
     dependencies:
       '@types/mdx': 2.0.14
       '@types/react': 19.2.18
-      fumadocs-core: 16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
-      fumadocs-typescript: 5.3.0(417ca81626641757f049abb2504ca3a8)
-      fumadocs-ui: '@fumadocs/base-ui@16.14.4(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.14.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.31.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(tailwindcss@4.3.3)'
+      fumadocs-core: 16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3)
+      fumadocs-typescript: 5.3.0(2a50bad7387c8e49989ca53ab9d0deb1)
+      fumadocs-ui: '@fumadocs/base-ui@16.15.4(@types/mdx@2.0.14)(@types/react@19.2.18)(fumadocs-core@16.15.4(@mdx-js/mdx@3.1.1(supports-color@8.1.1))(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.2.18)(lucide-react@1.34.0(react@19.2.0))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(supports-color@8.1.1)(zod@4.4.3))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.3.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(tailwindcss@4.3.3)'
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
     transitivePeerDependencies:
@@ -17416,15 +17416,15 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
-  motion-dom@13.0.0:
+  motion-dom@13.1.1:
     dependencies:
       motion-utils: 13.0.0
 
   motion-utils@13.0.0: {}
 
-  motion@13.1.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  motion@13.1.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
-      framer-motion: 13.1.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      framer-motion: 13.1.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       tslib: 2.8.1
     optionalDependencies:
       react: 19.2.0
@@ -17914,7 +17914,7 @@ snapshots:
 
   picomatch@2.3.2: {}
 
-  picomatch@4.0.5: {}
+  picomatch@4.0.7: {}
 
   pirates@4.0.7: {}
 
@@ -19176,8 +19176,8 @@ snapshots:
 
   tinyglobby@0.2.17:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.5)
-      picomatch: 4.0.5
+      fdir: 6.5.0(picomatch@4.0.7)
+      picomatch: 4.0.7
 
   tinypool@2.1.0: {}
 
@@ -19700,27 +19700,27 @@ snapshots:
 
   yoctocolors@2.2.0: {}
 
-  yuku-analyzer@0.8.7:
+  yuku-analyzer@0.9.3:
     dependencies:
-      '@yuku-toolchain/types': 0.8.7
-      yuku-ast: 0.8.7
+      '@yuku-toolchain/types': 0.9.3
+      yuku-ast: 0.9.3
     optionalDependencies:
-      '@yuku-analyzer/binding-android-arm64': 0.8.7
-      '@yuku-analyzer/binding-darwin-arm64': 0.8.7
-      '@yuku-analyzer/binding-darwin-x64': 0.8.7
-      '@yuku-analyzer/binding-freebsd-x64': 0.8.7
-      '@yuku-analyzer/binding-linux-arm-gnu': 0.8.7
-      '@yuku-analyzer/binding-linux-arm-musl': 0.8.7
-      '@yuku-analyzer/binding-linux-arm64-gnu': 0.8.7
-      '@yuku-analyzer/binding-linux-arm64-musl': 0.8.7
-      '@yuku-analyzer/binding-linux-x64-gnu': 0.8.7
-      '@yuku-analyzer/binding-linux-x64-musl': 0.8.7
-      '@yuku-analyzer/binding-win32-arm64': 0.8.7
-      '@yuku-analyzer/binding-win32-x64': 0.8.7
+      '@yuku-analyzer/binding-android-arm64': 0.9.3
+      '@yuku-analyzer/binding-darwin-arm64': 0.9.3
+      '@yuku-analyzer/binding-darwin-x64': 0.9.3
+      '@yuku-analyzer/binding-freebsd-x64': 0.9.3
+      '@yuku-analyzer/binding-linux-arm-gnu': 0.9.3
+      '@yuku-analyzer/binding-linux-arm-musl': 0.9.3
+      '@yuku-analyzer/binding-linux-arm64-gnu': 0.9.3
+      '@yuku-analyzer/binding-linux-arm64-musl': 0.9.3
+      '@yuku-analyzer/binding-linux-x64-gnu': 0.9.3
+      '@yuku-analyzer/binding-linux-x64-musl': 0.9.3
+      '@yuku-analyzer/binding-win32-arm64': 0.9.3
+      '@yuku-analyzer/binding-win32-x64': 0.9.3
 
-  yuku-ast@0.8.7:
+  yuku-ast@0.9.3:
     dependencies:
-      '@yuku-toolchain/types': 0.8.7
+      '@yuku-toolchain/types': 0.9.3
 
   zbsearch@4.0.0: {}
 
