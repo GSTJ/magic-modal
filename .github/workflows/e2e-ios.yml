@@ -193,7 +193,7 @@ jobs:
 
     steps:
       - name: 🏗 Setup Repo
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: 🏗 Select Xcode 26 (Swift 6.1+ for expo-modules-core)
         id: xcode
@@ -231,10 +231,10 @@ jobs:
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
 
       - name: 🏗 Setup PNPM
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -275,7 +275,7 @@ jobs:
       - name: ♻️ Restore node_modules
         id: deps-cache
         if: ${{ github.event.inputs.cold != 'true' }}
-        uses: actions/cache/restore@v6
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: |
             node_modules
@@ -286,7 +286,7 @@ jobs:
       - name: ♻️ Restore prebuilt ios/ (Pods included)
         id: ios-cache
         if: ${{ github.event.inputs.cold != 'true' }}
-        uses: actions/cache/restore@v6
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ env.EXAMPLE_DIR }}/ios
           key: ios-dir-${{ steps.key.outputs.native }}
@@ -301,7 +301,7 @@ jobs:
       - name: ♻️ Restore DerivedData
         id: dd-cache
         if: ${{ github.event.inputs.cold != 'true' }}
-        uses: actions/cache/restore@v6
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/DerivedData
           key: dd-${{ steps.key.outputs.native }}
@@ -309,7 +309,7 @@ jobs:
       - name: ♻️ Restore Maestro CLI
         id: maestro-cache
         if: ${{ github.event.inputs.cold != 'true' }}
-        uses: actions/cache/restore@v6
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.maestro
           key: maestro-${{ env.MAESTRO_VERSION }}
@@ -327,7 +327,7 @@ jobs:
 
       - name: 💾 Save node_modules
         if: ${{ steps.deps-cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v6
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: |
             node_modules
@@ -435,21 +435,21 @@ jobs:
       # build warm. Gated on a miss so we don't re-upload identical contents.
       - name: 💾 Save prebuilt ios/
         if: ${{ always() && steps.ios-cache.outputs.cache-hit != 'true' && steps.build.outcome == 'success' }}
-        uses: actions/cache/save@v6
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ env.EXAMPLE_DIR }}/ios
           key: ios-dir-${{ steps.key.outputs.native }}
 
       - name: 💾 Save DerivedData
         if: ${{ always() && steps.dd-cache.outputs.cache-hit != 'true' && steps.build.outcome == 'success' }}
-        uses: actions/cache/save@v6
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/DerivedData
           key: dd-${{ steps.key.outputs.native }}
 
       - name: 💾 Save Maestro CLI
         if: ${{ always() && steps.maestro-cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v6
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.maestro
           key: maestro-${{ env.MAESTRO_VERSION }}
@@ -539,7 +539,7 @@ jobs:
 
       - name: 📤 Upload Maestro debug output
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: maestro-debug-output
           path: |
