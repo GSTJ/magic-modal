@@ -31,7 +31,7 @@ export const PanGestureSurfaceV2 = ({
       // `Gesture.Pan()` is the only swipe API gesture-handler 2.x has, and 3.x
       // marks the builder deprecated. The call is what keeps 2.x, and so every
       // current Expo SDK, working.
-      // eslint-disable-next-line react/react-compiler -- `Gesture.Pan` is gesture-handler's builder factory, not a component; the rule has no way to tell
+      // eslint-disable-next-line react/capitalized-calls -- `Gesture.Pan` is gesture-handler's builder factory, not a component; the rule has no way to tell. (oxlint 1.79 split the old `react/react-compiler` rule this comment used to name into per-category rules, oxc-project/oxc#25500.)
       Gesture.Pan()
         .enabled(swipe.enabled)
         .minDistance(swipe.minDistance)

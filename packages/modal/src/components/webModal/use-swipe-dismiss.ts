@@ -1,10 +1,12 @@
-/* eslint-disable react/react-compiler -- The hook is handed a DOM node so it can
+/* eslint-disable react/immutability -- The hook is handed a DOM node so it can
  * drive it: it sets `touch-action` on the dialog and writes transforms and
  * opacity to the layers as the finger moves. The rule reads every one of those
  * as mutating a hook argument. Painting a drag through React state instead
  * would mean a render per pointer event, which is exactly what the native
  * chrome uses the UI thread to avoid. Same call as the one at the top of
- * `magic-modal.tsx`: `react/react-compiler` is a nursery rule, and DECISIONS.md
+ * `magic-modal.tsx`: oxlint 1.79 split the old `react/react-compiler` nursery
+ * rule this comment used to name into per-category rules (oxc-project/oxc#25500);
+ * `react/immutability` is the one that now covers these hits. DECISIONS.md
  * in GSTJ/magic says to switch it off locally when it misbehaves rather than
  * contort the code.
  */

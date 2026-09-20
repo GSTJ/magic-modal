@@ -377,6 +377,10 @@ export const PracticalExamples = () => {
     }, panelRef);
 
     return () => context.revert();
+    // `activeID` is never read in the body, but it's the whole point of the
+    // dependency: the animation should replay whenever the active example
+    // switches, even though the timeline drives itself through DOM selectors.
+    // eslint-disable-next-line react/exhaustive-effect-dependencies -- see above
   }, [activeID]);
 
   return (

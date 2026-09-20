@@ -1,9 +1,12 @@
-/* eslint-disable react/react-compiler -- Every hit in this file is
+/* eslint-disable react/immutability -- Every hit in this file is
  * `sharedValue.value = …` inside a `"worklet"`. Assigning to `.value` is
  * Reanimated's only way to drive an animation from the UI thread, and the rule
  * reads it as mutating a hook's return value. Nothing here is a React render
- * mutation. `react/react-compiler` is a nursery rule; DECISIONS.md in GSTJ/magic
- * says to switch it off locally when it misbehaves rather than contort the code.
+ * mutation. oxlint 1.79 split the old `react/react-compiler` nursery rule this
+ * comment used to name into per-category rules (oxc-project/oxc#25500);
+ * `react/immutability` is the one that now covers these hits. DECISIONS.md in
+ * GSTJ/magic says to switch it off locally when it misbehaves rather than
+ * contort the code.
  */
 
 import type { Direction, ModalChildren } from "../constants/types";
