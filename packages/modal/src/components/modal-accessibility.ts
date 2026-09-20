@@ -199,5 +199,10 @@ export const useWebModalFocus = ({
       document.removeEventListener("focusin", keepFocusInside);
       document.removeEventListener("keydown", handleKeyDown);
     };
+    // `childrenIdentity` is never read in the body, but it re-runs the
+    // mount-focus scan when the dialog's children change, so a freshly
+    // rendered focusable element gets picked up instead of staying wired to
+    // whatever was focusable when the dialog first opened.
+    // eslint-disable-next-line react/exhaustive-effect-dependencies -- see above
   }, [childrenIdentity, dialogNode, isTopmost, onSystemDismiss]);
 };
