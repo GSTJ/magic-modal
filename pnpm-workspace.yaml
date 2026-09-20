@@ -19,9 +19,9 @@ overrides:
   "brace-expansion": "^5.0.9"
   "decode-uri-component": "^0.5.0"
   "fast-uri": "^3.1.6"
-  "hono": "^4.12.34"
+  "hono": "^4.13.5"
   "js-yaml@3.15.0": "5.4.0"
-  "js-yaml@4.3.0": "4.3.1"
+  "js-yaml@4.3.0": "4.3.2"
   "nanoid@3.3.16": "3.3.18"
   "qs": "^6.16.0"
   "uuid": "^14.0.0"
@@ -37,7 +37,7 @@ overrides:
   # sharp 0.34.5 inherits the libvips CVEs in GHSA-f88m-g3jw-g9cj. The docs site
   # is a static export, so next never runs the image optimizer and never loads
   # sharp, but it ships in the lockfile either way, so it gets patched.
-  "sharp": "^0.35.3"
+  "sharp": "^0.35.4"
 
 patchedDependencies:
   "minimatch@3.1.5": "patches/minimatch@3.1.5.patch"
