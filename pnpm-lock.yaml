@@ -150,8 +150,8 @@ importers:
         specifier: ^1.2.0
         version: 1.2.5(oxfmt@0.66.0)
       magic-oxlint-config:
-        specifier: ^2.0.0
-        version: 2.0.6(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.81.0)
+        specifier: ^3.0.0
+        version: 3.0.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.81.0)
       magic-tsconfig:
         specifier: ^1.2.0
         version: 1.2.4
@@ -336,8 +336,8 @@ importers:
         specifier: ^1.2.0
         version: 1.2.5(oxfmt@0.66.0)
       magic-oxlint-config:
-        specifier: ^2.0.0
-        version: 2.0.6(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.81.0)
+        specifier: ^3.0.0
+        version: 3.0.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.81.0)
       magic-tsconfig:
         specifier: ^1.2.0
         version: 1.2.4
@@ -421,8 +421,8 @@ importers:
         specifier: ^1.2.0
         version: 1.2.5(oxfmt@0.66.0)
       magic-oxlint-config:
-        specifier: ^2.0.0
-        version: 2.0.6(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.81.0)
+        specifier: ^3.0.0
+        version: 3.0.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.81.0)
       magic-tsconfig:
         specifier: ^1.2.0
         version: 1.2.4
@@ -7282,11 +7282,11 @@ packages:
       oxlint:
         optional: true
 
-  magic-oxlint-config@2.0.6:
-    resolution: {integrity: sha512-xD0YF4Prsu8G7IM8ola3zbauttytY+Mv0npLoojF2YBwwLI5HXdy2MVfMmoKBch6UDwFiGGomZkJTCqC9aHpPQ==}
+  magic-oxlint-config@3.0.0:
+    resolution: {integrity: sha512-6T4CFrY75/LlHFMDqgSGUe63fNP7RSd/FjsfPT6jsFeWWcsKq9iRrD0VfGXNnORiaxXkD8D+iebp14nDkO7vlQ==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      oxlint: '>=1.78.0'
+      oxlint: '>=1.79.0'
     peerDependenciesMeta:
       oxlint:
         optional: true
@@ -16918,7 +16918,7 @@ snapshots:
     transitivePeerDependencies:
       - eslint
 
-  magic-oxlint-config@2.0.6(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.81.0):
+  magic-oxlint-config@3.0.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(oxlint@1.81.0):
     dependencies:
       eslint-plugin-safe-jsx: 1.3.9(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
       magic-oxlint-plugin: 1.2.4(oxlint@1.81.0)
