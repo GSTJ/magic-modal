@@ -28,7 +28,7 @@ jobs:
     # `@v1` is a moving major tag, so a fix in the shared workflow lands here on
     # the next run. Never `@main` — an unreviewed merge over there would reach
     # every repo's CI immediately.
-    uses: GSTJ/magic/.github/workflows/ci.yml@v1
+    uses: GSTJ/magic/.github/workflows/ci.yml@v2
     with:
       # Includes the statically exported docs app, so broken routes, MDX, or
       # generated API tables cannot merge and fail only during deployment.
