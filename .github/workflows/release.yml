@@ -615,7 +615,8 @@ jobs:
           npm dist-tag add "react-native-magic-modal@$VERSION" latest
           # shellcheck disable=SC2016
           MESSAGE='Renamed to `magic-modal`. Existing installs keep working and receive every release. New code should install `magic-modal`: https://github.com/GSTJ/magic-modal'
-          npm deprecate "react-native-magic-modal@<$VERSION" "$MESSAGE"
+          # Every version, latest included: npm only marks versions that exist, so re-run after each publish.
+          npm deprecate "react-native-magic-modal@<=$VERSION" "$MESSAGE"
           npm deprecate "react-native-magic-modal@11.0.0" "Version 11.0.0 was published by mistake and can't be installed because its magic-modal@11.0.0 dependency was unpublished. Install react-native-magic-modal@10 or latest."
 
       - name: ✅ Verify both latest dist-tags
