@@ -6,7 +6,7 @@ import { source } from "@/lib/source";
 
 export const revalidate = false;
 
-export const GET = () =>
-  new Response(prefixMagicDocsLlmLinks(site, llms(source).index()), {
+export const GET = async () =>
+  new Response(prefixMagicDocsLlmLinks(site, await llms(source).index()), {
     headers: { "Content-Type": "text/plain; charset=utf-8" },
   });
