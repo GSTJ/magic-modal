@@ -1,0 +1,26 @@
+name: Deprecate react-native-magic-modal (temporary)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deprecate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Deprecate every published version
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          # shellcheck disable=SC2016
+          MESSAGE='Renamed to `magic-modal`. Existing installs keep working and receive every release. New code should install `magic-modal`: https://github.com/GSTJ/magic-modal'
+          npm deprecate "react-native-magic-modal@<11.0.0" "$MESSAGE"
+      - name: Verify
+        run: npm view react-native-magic-modal@10.2.1 deprecated
