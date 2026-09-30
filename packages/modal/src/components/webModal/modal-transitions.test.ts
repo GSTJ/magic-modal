@@ -2,11 +2,14 @@ import {
   animateAndCommit,
   applyStyle,
   EASE_IN_OUT_QUAD,
+  EASE_OUT_SWIPE,
   ENTER_OFFSET_IN_PX,
   getBackdropOpacity,
   getContentEnterKeyframes,
   getContentExitKeyframes,
+  getFadeKeyframes,
   runWebAnimation,
+  SWIPE_RETURN_DURATION_IN_MS,
 } from "./modal-transitions";
 
 /**
@@ -132,5 +135,27 @@ describe("easing", () => {
     // Reanimated's `withTiming` default, which is what a layout animation gets
     // when the modal only sets `.duration()`.
     expect(EASE_IN_OUT_QUAD).toBe("cubic-bezier(0.455, 0.03, 0.515, 0.955)");
+  });
+});
+
+describe("backdrop fade", () => {
+  it("fades in on entrance and out on exit", () => {
+    // magic-modal.browser.tsx plays getFadeKeyframes(0, 1) on mount and
+    // getFadeKeyframes(1, 0) once the portal starts the exit.
+    expect(getFadeKeyframes(0, 1)).toStrictEqual([
+      { opacity: 0 },
+      { opacity: 1 },
+    ]);
+    expect(getFadeKeyframes(1, 0)).toStrictEqual([
+      { opacity: 1 },
+      { opacity: 0 },
+    ]);
+  });
+
+  it("settles a released drag back with the swipe easing", () => {
+    // use-swipe-dismiss.ts settleBack runs SWIPE_RETURN_DURATION_IN_MS at
+    // EASE_OUT_SWIPE, the stand-in for the native springs.
+    expect(EASE_OUT_SWIPE).toBe("cubic-bezier(0.22, 1, 0.36, 1)");
+    expect(SWIPE_RETURN_DURATION_IN_MS).toBe(220);
   });
 });
