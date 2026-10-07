@@ -38,7 +38,24 @@ overrides:
   # sharp 0.34.5 inherits the libvips CVEs in GHSA-f88m-g3jw-g9cj. The docs site
   # is a static export, so next never runs the image optimizer and never loads
   # sharp, but it ships in the lockfile either way, so it gets patched.
-  "sharp": "^0.35.4"
+  "sharp": "^0.35.5"
+  # Advisories published 2026-10 that block `pnpm audit`. All reach us through
+  # dev tooling (shadcn, oxfmt, release-it, expo, serve), not the shipped package.
+  "basic-ftp": "^6.2.1"
+  "source-map-js": "^1.2.2"
+  "proxy-addr": "^2.0.8"
+  "compression": "^1.8.2"
+  "tinypool": "^2.1.2"
+  "shell-quote": "^1.11.0"
+  "@modelcontextprotocol/sdk": "^1.31.0"
+
+# node-forge and braces have no patched release yet. Both are dev-only (expo
+# code signing and jest/chokidar globbing on our own files). Drop these when
+# upstream ships a fix.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-86w9-cpqp-85rv
+    - GHSA-vfj7-8cjw-p6xm
 
 patchedDependencies:
   "minimatch@3.1.5": "patches/minimatch@3.1.5.patch"
@@ -57,6 +74,13 @@ minimumReleaseAge: 20160
 
 minimumReleaseAgeExclude:
   - "magic-*"
+  # Security fixes published inside the quarantine window (October 2026 audit
+  # advisories). Remove them after 2026-10-14.
+  - "@img/*"
+  - "sharp@0.35.5"
+  - "@modelcontextprotocol/sdk@1.31.0"
+  - "shell-quote@1.11.0"
+  - "source-map-js@1.2.2"
   # Security fixes published inside the quarantine window. Remove them after
   # 2026-09-04.
   - "@xmldom/xmldom@0.8.15"
