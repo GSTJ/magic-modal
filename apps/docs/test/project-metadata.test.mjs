@@ -18,21 +18,21 @@ const jsonResponse = (payload, status = 200) =>
     status,
   });
 
-test("collects project metadata without rounding or fallback metrics", async () => {
-  const fetcher = (url) => {
-    if (url === projectMetadataConfig.githubApi) {
-      return jsonResponse({
-        created_at: "2022-02-21T10:00:00Z",
-        license: { spdx_id: "MIT" },
-        stargazers_count: 641,
-      });
-    }
-    if (url === projectMetadataConfig.npmDownloadsApi) {
-      return jsonResponse({ downloads: 3950 });
-    }
-    return jsonResponse({ version: "9.0.1" });
-  };
+const fetcher = (url) => {
+  if (url === projectMetadataConfig.githubApi) {
+    return jsonResponse({
+      created_at: "2022-02-21T10:00:00Z",
+      license: { spdx_id: "MIT" },
+      stargazers_count: 641,
+    });
+  }
+  if (url === projectMetadataConfig.npmDownloadsApi) {
+    return jsonResponse({ downloads: 3950 });
+  }
+  return jsonResponse({ version: "9.0.1" });
+};
 
+test("collects project metadata without rounding or fallback metrics", async () => {
   const snapshot = await fetchProjectMetadata({
     fetcher,
     now: () => new Date("2026-07-28T12:00:00Z"),
