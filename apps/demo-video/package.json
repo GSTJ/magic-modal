@@ -16,11 +16,11 @@
     "render:poster": "remotion still MagicModalSocial ../../media/magic-modal-social.png"
   },
   "dependencies": {
-    "@remotion/cli": "4.0.527",
-    "@remotion/fonts": "4.0.527",
+    "@remotion/cli": "4.0.529",
+    "@remotion/fonts": "4.0.529",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "remotion": "4.0.527",
+    "remotion": "4.0.529",
     "zod": "4.6.5"
   },
   "devDependencies": {
