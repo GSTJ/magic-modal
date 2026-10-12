@@ -48,6 +48,8 @@ overrides:
   "tinypool": "^2.1.2"
   "shell-quote": "^1.11.0"
   "@modelcontextprotocol/sdk": "^1.31.0"
+  # Reaches us through ts-jest (dev only).
+  "handlebars": "^4.7.10"
 
 # node-forge and braces have no patched release yet. Both are dev-only (expo
 # code signing and jest/chokidar globbing on our own files). Drop these when
@@ -81,6 +83,9 @@ minimumReleaseAgeExclude:
   - "@modelcontextprotocol/sdk@1.31.0"
   - "shell-quote@1.11.0"
   - "source-map-js@1.2.2"
+  - "next@16.3.8"
+  - "@next/*"
+  - "handlebars@4.7.10"
   # Security fixes published inside the quarantine window. Remove them after
   # 2026-09-04.
   - "@xmldom/xmldom@0.8.15"
