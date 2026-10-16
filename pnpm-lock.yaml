@@ -516,7 +516,7 @@ importers:
         version: 1.86.0
       pod-install:
         specifier: ^1.0.0
-        version: 1.1.0
+        version: 1.2.1
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -8271,8 +8271,8 @@ packages:
     resolution: {integrity: sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==}
     engines: {node: '>=4.0.0'}
 
-  pod-install@1.1.0:
-    resolution: {integrity: sha512-WKLQ+5mcCoDJKOuGdKZC9j6C8+DJR5eiQCzO1iN4uNipZ68puOkjGVf/TQt9CxvQg1VqaA+1wGZvPiDu3qM47A==}
+  pod-install@1.2.1:
+    resolution: {integrity: sha512-A1RKWVrHNhBjn4/jjRiV139CzdFziGh21avjatdFgeF+R9UZZujDlGrHJQi0JaKYyHmuJrNlESTFwK6MYA4bbA==}
     hasBin: true
 
   postcss-modules-extract-imports@3.1.0:
@@ -18321,7 +18321,7 @@ snapshots:
 
   pngjs@3.4.0: {}
 
-  pod-install@1.1.0: {}
+  pod-install@1.2.1: {}
 
   postcss-modules-extract-imports@3.1.0(postcss@8.5.28):
     dependencies:
