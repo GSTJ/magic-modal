@@ -27,6 +27,8 @@ const git = (...args) =>
   execFileSync("git", args, {
     cwd: repoRoot,
     encoding: "utf8",
+    // Renovate commit bodies carry upstream release notes (pnpm's pass 1MB), past the default.
+    maxBuffer: 256 * 1024 * 1024,
     stdio: ["ignore", "pipe", "pipe"],
   }).trim();
 
