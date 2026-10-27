@@ -9,6 +9,7 @@ import {
   Heart,
 } from "lucide-react";
 
+import { AuthorApps } from "@/components/author-apps";
 import { HomeEffects } from "@/components/home-effects";
 import { InstallCommand } from "@/components/install-command";
 import { LegacyAnchorRouter } from "@/components/legacy-anchor-router";
@@ -459,6 +460,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <AuthorApps />
 
       <footer className="mm-footer">
         <div className="mm-footer-intro">

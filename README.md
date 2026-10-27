@@ -226,3 +226,18 @@ and read the [contributing guide](CONTRIBUTING.md).
 ## License
 
 Magic Modal is licensed under the [MIT License](LICENSE).
+
+## More from the author
+
+Made by [Gabriel Taveira](https://www.gabrieltaveira.dev), who also built:
+
+<table>
+  <tr>
+    <td width="64"><a href="https://curvinha.app/?utm_source=magic-modal&utm_medium=readme"><img src="https://curvinha.app/assets/apple-touch-icon.png" width="48" height="48" alt="Curvinha icon"></a></td>
+    <td><a href="https://curvinha.app/?utm_source=magic-modal&utm_medium=readme"><b>Curvinha</b></a>: interior design for iPhone. Show your room and get a 3D proposal with real furniture from Brazilian stores. <a href="https://apps.apple.com/br/app/id6816957870?pt=126480814&ct=magic-modal-readme">App Store</a></td>
+  </tr>
+  <tr>
+    <td width="64"><a href="https://pegada.app/?utm_source=magic-modal&utm_medium=readme"><img src="https://pegada.app/apple-touch-icon.png" width="48" height="48" alt="Pegada icon"></a></td>
+    <td><a href="https://pegada.app/?utm_source=magic-modal&utm_medium=readme"><b>Pegada</b></a>: a new friend for your dog, nearby. It runs Magic Modal in production. <a href="https://apps.apple.com/br/app/id6450865592?pt=126480814&ct=magic-modal-readme">App Store</a></td>
+  </tr>
+</table>
