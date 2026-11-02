@@ -35,7 +35,7 @@
     "registry:build": "shadcn build --output apps/docs/public/r && pnpm --filter @magic-modal/docs exec node scripts/format-registry.mjs",
     "registry:check": "shadcn registry validate && pnpm registry:typecheck && pnpm registry:build",
     "registry:typecheck": "pnpm --filter magic-modal exec tsc --project ../../registry/tsconfig.json",
-    "security:check": "pnpm audit",
+    "security:check": "node --test tools/deepmerge-security.test.cjs && pnpm audit",
     "doctor": "turbo run doctor"
   },
   "config": {
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "magic-codemods": "^1.1.0",
-    "shadcn": "4.21.1",
+    "shadcn": "4.23.0",
     "turbo": "^2.5.4"
   }
 }
