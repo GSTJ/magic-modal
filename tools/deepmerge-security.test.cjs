@@ -42,3 +42,29 @@ test('legacy minimatch consumers use the patched matcher', () => {
   assert.equal(new match.Minimatch('*.js').match('a.js'), true);
   assert.deepEqual(match.braceExpand('a{1,2}'), ['a1', 'a2']);
 });
+
+test('legacy glob traverses patched minimatch segments in sync and callback APIs', async () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const path = require('node:path');
+  const glob = require('glob');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'modal-glob-'));
+  try {
+    fs.mkdirSync(path.join(root, 'nested'));
+    for (const file of ['Example.podspec', '.Hidden.podspec', 'nested/Other.podspec', 'ignored.txt']) {
+      fs.writeFileSync(path.join(root, file), '');
+    }
+    assert.deepEqual(glob.sync('*.podspec', { cwd: root }), ['Example.podspec']);
+    assert.deepEqual(glob.sync('**/*.podspec', { cwd: root }), ['Example.podspec', 'nested/Other.podspec']);
+    assert.deepEqual(glob.sync('.*.podspec', { cwd: root }), ['.Hidden.podspec']);
+    assert.deepEqual(glob.sync('*.podspec', { cwd: root, dot: true }), ['.Hidden.podspec', 'Example.podspec']);
+    const files = await new Promise((resolve, reject) => glob('**/*.podspec', { cwd: root }, (error, result) => error ? reject(error) : resolve(result)));
+    assert.deepEqual(files, ['Example.podspec', 'nested/Other.podspec']);
+    const defaults = require('minimatch').defaults({ dot: true });
+    const segment = new defaults.Minimatch('*.podspec').set[0][0];
+    assert.equal(segment._glob, '*.podspec');
+    assert.deepEqual('.Hidden.podspec'.match(segment), ['.Hidden.podspec']);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});

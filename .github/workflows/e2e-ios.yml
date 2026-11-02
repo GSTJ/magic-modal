@@ -264,8 +264,8 @@ jobs:
       - name: 🔑 Compute native cache key
         id: key
         run: |
-          echo "native=${CACHE_EPOCH}-${{ steps.xcode.outputs.version }}-${{ hashFiles('pnpm-lock.yaml', 'patches/**', '.nvmrc', 'examples/kitchen-sink/package.json', 'examples/kitchen-sink/app.config.ts', 'examples/kitchen-sink/plugins/**', 'examples/kitchen-sink/assets/**') }}" >> "$GITHUB_OUTPUT"
-          echo "deps=${CACHE_EPOCH}-${{ hashFiles('pnpm-lock.yaml', 'patches/**', '.nvmrc') }}" >> "$GITHUB_OUTPUT"
+          echo "native=${CACHE_EPOCH}-${{ steps.xcode.outputs.version }}-${{ hashFiles('pnpm-lock.yaml', 'patches/**', 'tools/vendor/**', '.nvmrc', 'examples/kitchen-sink/package.json', 'examples/kitchen-sink/app.config.ts', 'examples/kitchen-sink/plugins/**', 'examples/kitchen-sink/assets/**') }}" >> "$GITHUB_OUTPUT"
+          echo "deps=${CACHE_EPOCH}-${{ hashFiles('pnpm-lock.yaml', 'patches/**', 'tools/vendor/**', '.nvmrc') }}" >> "$GITHUB_OUTPUT"
 
       # node_modules itself, not just the pnpm store. Restoring the store still
       # leaves `pnpm install` to relink every package, and the Pods reference
