@@ -1,0 +1,9 @@
+{
+  "name": "@magic-modal/minimatch-compat",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.cjs",
+  "dependencies": {
+    "minimatch": "11.0.4"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "@magic-modal/deepmerge",
+  "version": "4.3.1-patched.1",
+  "private": true,
+  "main": "cjs.js",
+  "types": "index.d.ts",
+  "license": "MIT"
+}

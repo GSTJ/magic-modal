@@ -12,12 +12,12 @@
   },
   "dependencies": {
     "magic-modal": "workspace:*",
-    "next": "16.3.8",
+    "next": "16.4.1",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.6.5",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "magic-oxfmt-config": "^1.2.0",

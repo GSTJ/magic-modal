@@ -79,7 +79,7 @@
     "@types/react": "~19.3.0",
     "bunchee": "^7.0.0",
     "conventional-changelog": "^8.1.0",
-    "conventional-changelog-conventionalcommits": "^10.2.1",
+    "conventional-changelog-conventionalcommits": "^10.4.1",
     "conventional-recommended-bump": "^12.1.0",
     "cz-conventional-changelog": "^3.3.0",
     "esbuild": "0.28.2",
