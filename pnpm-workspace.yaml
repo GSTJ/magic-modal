@@ -54,7 +54,7 @@ overrides:
   "compression": "^1.8.2"
   "tinypool": "^2.1.2"
   "shell-quote": "^1.11.0"
-  "@modelcontextprotocol/sdk": "1.32.0"
+  "@modelcontextprotocol/sdk": "1.32.2"
   # Reaches us through ts-jest (dev only).
   "handlebars": "^4.7.10"
 
