@@ -193,7 +193,7 @@ overrides:
   uuid: ^14.0.0
   postcss: ^8.5.23
   sharp: ^0.35.5
-  basic-ftp: ^6.2.1
+  basic-ftp: 6.2.4
   source-map-js: ^1.2.2
   proxy-addr: ^2.0.8
   compression: ^1.8.2
@@ -4908,8 +4908,8 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  basic-ftp@6.2.1:
-    resolution: {integrity: sha512-bK67isD+lKq46AU8vNtjvMaT2ZqAOAmNCbxUHlFBRD4k15NWxyEjmaKtZPlgce58So4BNTjITGQOVTjL9y0ECA==}
+  basic-ftp@6.2.4:
+    resolution: {integrity: sha512-6ACKOQxSlv5xka4i03ujfncNr9qp5yZNK3u0+yUFTAU4HfG5AeztCC9+R1I9dm8oq+1vt4RZ7cIRTBrdHqL2mw==}
     engines: {node: '>=10.0.0'}
 
   before-after-hook@4.0.0:
@@ -14029,7 +14029,7 @@ snapshots:
 
   baseline-browser-mapping@2.11.29: {}
 
-  basic-ftp@6.2.1: {}
+  basic-ftp@6.2.4: {}
 
   before-after-hook@4.0.0: {}
 
@@ -15579,7 +15579,7 @@ snapshots:
 
   get-uri@8.0.1(supports-color@8.1.1):
     dependencies:
-      basic-ftp: 6.2.1
+      basic-ftp: 6.2.4
       data-uri-to-buffer: 8.0.0
       debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
