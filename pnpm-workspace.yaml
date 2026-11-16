@@ -48,7 +48,7 @@ overrides:
   "sharp": "^0.35.5"
   # Advisories published 2026-10 that block `pnpm audit`. All reach us through
   # dev tooling (shadcn, oxfmt, release-it, expo, serve), not the shipped package.
-  "basic-ftp": "^6.2.1"
+  "basic-ftp": "6.2.4"
   "source-map-js": "^1.2.2"
   "proxy-addr": "^2.0.8"
   "compression": "^1.8.2"
@@ -77,6 +77,8 @@ allowBuilds:
 minimumReleaseAge: 20160
 
 minimumReleaseAgeExclude:
+  # Fixes GHSA-r4jh-29pc-gfqr and GHSA-5pm8-86m8-9m6r. Remove after 2026-11-27.
+  - "basic-ftp@6.2.4"
   # Exact Expo 55.0.32 dependency closure required by expo-doctor.
   - "@expo/cli@55.0.37"
   - "@expo/config-plugins@55.0.12"
