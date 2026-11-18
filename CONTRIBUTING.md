@@ -200,3 +200,21 @@ Community Impact Guidelines were inspired by [Mozilla's code of conduct enforcem
 
 For answers to common questions about this code of conduct, see the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at https://www.contributor-covenant.org/translations.
+
+## Local security patches
+
+Picomatch 2.3.2 and 4.0.7 have no published fix for GHSA-fc5q-39xc-vjpf.
+The local patches use the parser's literal fallback for repeated wildcard
+operands and nested grammar without a proven safe reduction. This intentionally
+narrows repeated extglob support in development tooling: unproved nested groups
+and alternatives with overlapping initial characters now match literally.
+Flat disjoint literal alternatives, fixed-width question marks, quoted stars,
+POSIX character classes and the existing single-character star reduction stay
+supported. The 2.3.2 reduction is restricted to one branch because its old
+multi-branch form discards alternatives. Picomatch is not a runtime dependency
+of the published modal package.
+
+Run `pnpm run security:check` to verify the installed parser bytes, timeout-bound
+regressions and every dependency path reported by the registry. New advisories,
+unknown versions, unresolved paths and missing patches fail. `pnpm audit` keeps
+the raw upstream advisory visible; these local mitigations do not resolve it.
