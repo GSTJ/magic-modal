@@ -5,8 +5,8 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const hashes = {
-  "2.3.2": "4b0501b3f04e1a7e67ef90b32dbc8cb383483be034cc8bfdafae002c60bf1b8a",
-  "4.0.7": "a37aea8127ca5f932bcf3ba220efc35dd0fdcbb7a3892a5b0b5ee8feb8af7e22",
+  "2.3.2": "be4f6ac53e953aa6c02e6f6c1773b9d035f9c48ac227bd0587049a3a2d9fe936",
+  "4.0.7": "5c04741270d46b2aa7aaf6797bfa9d0ea3f6e3318200dd3014a9e8db43110a12",
 };
 
 // Check the installed bytes as well as the public matcher. Each adversarial
@@ -31,6 +31,7 @@ export function verifyPicomatch(entry, version) {
          a.equal(match(glob + 'b'), true);
        }
        a.equal(p('+(a|b)')('abba'), true);
+       a.equal(p('+(*(a))')('aaaa'), true);
        a.equal(p('+([ab])')('abba'), true);
        a.equal(p('src/**/*.ts')('src/a/b.ts'), true);`,
     ],

@@ -1,8 +1,8 @@
 diff --git a/lib/parse.js b/lib/parse.js
-index caa2b86aa5a567df33cef4bda3c7a97794f439f8..3d5bbd756565b6c8d17321adc57314d8eabd1d48 100644
+index caa2b86aa5a567df33cef4bda3c7a97794f439f8..2afd007381aeb99c3e5458f0528b99ae39eadb39 100644
 --- a/lib/parse.js
 +++ b/lib/parse.js
-@@ -292,6 +292,27 @@ const analyzeRepeatedExtglob = (body, options) => {
+@@ -292,6 +292,28 @@ const analyzeRepeatedExtglob = (body, options) => {
  
    const branches = splitTopLevel(body).map(branch => branch.trim());
  
@@ -14,14 +14,15 @@ index caa2b86aa5a567df33cef4bda3c7a97794f439f8..3d5bbd756565b6c8d17321adc57314d8
 +    let bracket = false;
 +    let escaped = false;
 +    let paren = 0;
-+    for (const ch of branches[0]) {
++    for (let index = 0; index < branches[0].length; index++) {
++      const ch = branches[0][index];
 +      if (escaped) { escaped = false; continue; }
 +      if (ch === '\\') { escaped = true; continue; }
 +      if (ch === '[') { bracket = true; continue; }
 +      if (ch === ']') { bracket = false; continue; }
 +      if (!bracket && ch === '(') { paren++; continue; }
 +      if (!bracket && ch === ')') { paren--; continue; }
-+      if (!bracket && paren === 0 && (ch === '*' || ch === '?')) {
++      if (!bracket && paren === 0 && (ch === '*' || ch === '?') && branches[0][index + 1] !== '(') {
 +        return { risky: true };
 +      }
 +    }
