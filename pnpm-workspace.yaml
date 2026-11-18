@@ -3,6 +3,10 @@ packages:
   - examples/*
   - apps/*
 
+patchedDependencies:
+  picomatch@2.3.2: patches/picomatch@2.3.2.patch
+  picomatch@4.0.7: patches/picomatch@4.0.7.patch
+
 nodeLinker: hoisted
 dedupeDirectDeps: true
 
@@ -77,6 +81,8 @@ allowBuilds:
 minimumReleaseAge: 20160
 
 minimumReleaseAgeExclude:
+  # Fixes GHSA-vc7v-qv4w-wrv8 and GHSA-mfr8-8qww-v76h. Remove after 2026-11-30.
+  - "next@16.4.5"
   # Fixes GHSA-r4jh-29pc-gfqr and GHSA-5pm8-86m8-9m6r. Remove after 2026-11-27.
   - "basic-ftp@6.2.4"
   # Exact Expo 55.0.32 dependency closure required by expo-doctor.

@@ -1,0 +1,32 @@
+diff --git a/lib/parse.js b/lib/parse.js
+index caa2b86aa5a567df33cef4bda3c7a97794f439f8..3d5bbd756565b6c8d17321adc57314d8eabd1d48 100644
+--- a/lib/parse.js
++++ b/lib/parse.js
+@@ -292,6 +292,27 @@ const analyzeRepeatedExtglob = (body, options) => {
+ 
+   const branches = splitTopLevel(body).map(branch => branch.trim());
+ 
++  // A wildcard inside a single repeated branch also creates nested
++  // quantifiers, e.g. +(*) and +(*a). Keep these literal like the
++  // already-rejected overlapping multi-branch forms. Escapes and
++  // character classes do not introduce wildcard quantifiers.
++  if (branches.length === 1) {
++    let bracket = false;
++    let escaped = false;
++    let paren = 0;
++    for (const ch of branches[0]) {
++      if (escaped) { escaped = false; continue; }
++      if (ch === '\\') { escaped = true; continue; }
++      if (ch === '[') { bracket = true; continue; }
++      if (ch === ']') { bracket = false; continue; }
++      if (!bracket && ch === '(') { paren++; continue; }
++      if (!bracket && ch === ')') { paren--; continue; }
++      if (!bracket && paren === 0 && (ch === '*' || ch === '?')) {
++        return { risky: true };
++      }
++    }
++  }
++
+   if (branches.length > 1) {
+     if (
+       branches.some(branch => branch === '') ||
