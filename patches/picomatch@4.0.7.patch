@@ -33,7 +33,7 @@ index 29207512c60183b4bb9bf5112be3b9b5f4a9a9fd..235ac3fda32a2aef370cffc733c7e346
    if (branches.length > 1) {
      if (
        branches.some(branch => branch === '') ||
-@@ -343,6 +367,13 @@ const analyzeRepeatedExtglob = (body, options) => {
+@@ -343,6 +367,16 @@ const analyzeRepeatedExtglob = (body, options) => {
        : { risky: true };
    }
  
@@ -42,7 +42,10 @@ index 29207512c60183b4bb9bf5112be3b9b5f4a9a9fd..235ac3fda32a2aef370cffc733c7e346
 +  // character-sequence reduction above already proved a safe output.
 +  if (nested || (branches.length > 1 && (
 +    branches.some(branch => !/^[a-zA-Z0-9_/-]+$/.test(branch)) ||
-+    new Set(branches.map(branch => branch[0])).size !== branches.length
++    new Set(branches.map(branch =>
++      options.nocase || (options.flags && options.flags.includes('i'))
++        ? branch[0].toLowerCase() : branch[0]
++    )).size !== branches.length
 +  ))) return { risky: true };
    return { risky: false };
  };

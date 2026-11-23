@@ -5,8 +5,8 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const hashes = {
-  "2.3.2": "296547ec9d733720b648854bc52a4cfa1c255247336c10b0f6745433bd9e01f2",
-  "4.0.7": "eddbd5fcdabdac7e5983ac07c955d2d0b1b5a2d2833cac88ca71cb4a4a6fa6a8",
+  "2.3.2": "1df207ee85c86d2d31c2c01bfedca42c6c659a72605b9666d055e00c52928aa5",
+  "4.0.7": "1d0befdfdd8c7fe8e2a3c4fb7f0bfe74e8f8724bb4c122cbd9e3471f8fab3a3f",
 };
 
 // Check the installed bytes as well as the public matcher. Each adversarial
@@ -29,6 +29,12 @@ export function verifyPicomatch(entry, version) {
          const match = p(glob + 'b');
          a.equal(match('a'.repeat(48) + 'c'), false);
          a.equal(match(glob + 'b'), true);
+       }
+       for (const opts of [{nocase:true}, {flags:'i'}, {flags:'iu'}]) {
+         const glob = '+(a|Aa)b';
+         a.equal(p(glob, opts)('a'.repeat(48) + 'c'), false);
+         a.equal(p(glob, opts)(glob), true);
+         a.equal(p('+(a|B)b', opts)('aBabb'), true);
        }
        a.equal(p('+(a|b)')('abba'), true);
        a.equal(p('+(*(a))')('aaaa'), true);

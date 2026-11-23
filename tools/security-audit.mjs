@@ -17,6 +17,14 @@ assert.ok(result.status === 0 || result.status === 1, result.stderr);
 const audit = JSON.parse(result.stdout);
 assert.ok(audit.metadata && audit.advisories, "Missing audit response");
 const checked = new Set();
+// Exercise the installed parsers even when the registry omits this advisory.
+const require = createRequire(join(root, "package.json"));
+for (const parent of [join(root, "package.json"), require.resolve("micromatch")]) {
+  const entry = createRequire(parent).resolve("picomatch");
+  const manifest = JSON.parse(readFileSync(join(dirname(entry), "package.json"), "utf8"));
+  verifyPicomatch(entry, manifest.version);
+  checked.add(entry);
+}
 let paths = 0;
 for (const finding of Object.values(audit.advisories)) {
   // There is no published fix. Accept this advisory only after checking every

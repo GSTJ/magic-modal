@@ -208,7 +208,8 @@ The local patches use the parser's literal fallback for repeated wildcard
 operands and nested grammar without a proven safe reduction. This intentionally
 narrows repeated extglob support in development tooling: unproved nested groups
 and alternatives with overlapping initial characters now match literally.
-Flat disjoint literal alternatives, fixed-width question marks, quoted stars,
+Flat literal alternatives with disjoint initials under the active case matching
+mode, fixed-width question marks, quoted stars,
 POSIX character classes and the existing single-character star reduction stay
 supported. The 2.3.2 reduction is restricted to one branch because its old
 multi-branch form discards alternatives. Picomatch is not a runtime dependency
