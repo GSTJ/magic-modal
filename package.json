@@ -35,7 +35,7 @@
     "registry:build": "shadcn build --output apps/docs/public/r && pnpm --filter @magic-modal/docs exec node scripts/format-registry.mjs",
     "registry:check": "shadcn registry validate && pnpm registry:typecheck && pnpm registry:build",
     "registry:typecheck": "pnpm --filter magic-modal exec tsc --project ../../registry/tsconfig.json",
-    "security:check": "node --test tools/deepmerge-security.test.cjs && pnpm audit",
+    "security:check": "node --test tools/deepmerge-security.test.cjs && node tools/security-audit.mjs",
     "doctor": "turbo run doctor"
   },
   "config": {

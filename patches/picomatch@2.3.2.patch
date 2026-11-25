@@ -1,0 +1,61 @@
+diff --git a/lib/parse.js b/lib/parse.js
+index caa2b86aa5a567df33cef4bda3c7a97794f439f8..02e2e1679202e13019b9537d5ea9ccd8a67617a8 100644
+--- a/lib/parse.js
++++ b/lib/parse.js
+@@ -292,6 +292,30 @@ const analyzeRepeatedExtglob = (body, options) => {
+ 
+   const branches = splitTopLevel(body).map(branch => branch.trim());
+ 
++  // Wildcard operands inside a repeated branch introduce nested quantifiers.
++  // Escaped tokens and ordinary character classes do not.
++  let nested = false;
++  let bracket = false;
++  let escaped = false;
++  let quoted = false;
++  for (let index = 0; index < body.length; index++) {
++    const ch = body[index];
++    if (escaped) { escaped = false; continue; }
++    if (ch === '\\') { escaped = true; continue; }
++    if (!bracket && ch === '"') { quoted = !quoted; continue; }
++    if (quoted) continue;
++    if (bracket && ch === '[' && body[index + 1] === ':') {
++      const end = body.indexOf(':]', index + 2);
++      if (end !== -1) { index = end + 1; continue; }
++    }
++    if (ch === '[') { bracket = true; continue; }
++    if (ch === ']') { bracket = false; continue; }
++    if (!bracket && (ch === '(' || ch === '{')) nested = true;
++    if (!bracket && (ch === '*' || ch === '+') && body[index + 1] !== '(') {
++      return { risky: true };
++    }
++  }
++
+   if (branches.length > 1) {
+     if (
+       branches.some(branch => branch === '') ||
+@@ -304,7 +328,7 @@ const analyzeRepeatedExtglob = (body, options) => {
+ 
+   for (const branch of branches) {
+     const safeOutput = getStarExtglobSequenceOutput(branch);
+-    if (safeOutput) {
++    if (safeOutput && branches.length === 1) {
+       return { risky: true, safeOutput };
+     }
+ 
+@@ -313,6 +337,16 @@ const analyzeRepeatedExtglob = (body, options) => {
+     }
+   }
+ 
++  // Preserve flat literal alternatives with disjoint initial characters.
++  // Other nested/alternative grammar is matched literally unless the existing
++  // character-sequence reduction above already proved a safe output.
++  if (nested || (branches.length > 1 && (
++    branches.some(branch => !/^[a-zA-Z0-9_/-]+$/.test(branch)) ||
++    new Set(branches.map(branch =>
++      options.nocase || (options.flags && options.flags.includes('i'))
++        ? branch[0].toLowerCase() : branch[0]
++    )).size !== branches.length
++  ))) return { risky: true };
+   return { risky: false };
+ };
+ 
