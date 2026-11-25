@@ -1,0 +1,201 @@
+$ pnpm run security:check && turbo run test
+$ node --test tools/deepmerge-security.test.cjs && node tools/security-audit.mjs
+✔ preserves the result prototype with a malicious target (0.671583ms)
+✔ preserves the result prototype with a malicious source (0.084833ms)
+✔ nested poison remains data without changing prototypes (0.0715ms)
+✔ retains arrays, symbols, custom merge, and merge.all (0.500417ms)
+✔ the installed dependency uses the hardened merge (0.566084ms)
+✔ legacy minimatch consumers use the patched matcher (8.361334ms)
+✔ legacy glob traverses patched minimatch segments in sync and callback APIs (16.587833ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 68.620834
+Audit passed: 0 locally patched picomatch paths, 2 installed copies. Raw registry advisory remains visible.
+
+   • turbo 2.11.7
+   • Packages in scope: @magic-modal/demo-video, @magic-modal/docs, @magic-modal/next-web, @magic/kitchen-sink, magic-modal, react-native-magic-modal
+   • Running test in 6 packages
+   • Remote caching disabled
+
+magic-modal:build: cache miss, executing c6d3b3675dd35e2f
+magic-modal:build: $ bunchee && node tools/wrap-entrypoints.mjs && node tools/check-web-build.mjs && node tools/check-pack-consumer.mjs
+magic-modal:build: Exports           File                           Size
+magic-modal:build: .                 dist/index.cjs                 64.7 kB
+magic-modal:build:                   dist/index.js                  63.8 kB
+magic-modal:build:                   dist/index.d.cts               2.95 kB
+magic-modal:build:                   dist/index.d.ts                2.95 kB
+magic-modal:build: . (react-native)  dist/index.react-native.cjs    48.2 kB
+magic-modal:build:                   dist/index.react-native.js     46.5 kB
+magic-modal:build:                   dist/index.react-native.d.cts  2.88 kB
+magic-modal:build:                   dist/index.react-native.d.ts   2.88 kB
+magic-modal:build: ✓ Web package boundary: runtime guard loads first, browser omits react-native, react-native-web, react-native-gesture-handler, react-native-reanimated, react-native-screens, react-native-worklets
+magic-modal:build: ✓ Web bundle: 14.1 KB minified, 5.4 KB gzipped (budget 6.6 KB), identical without the react-native alias
+magic-modal:build: ✓ Web SSR: the portal and its stylesheet render without a DOM
+magic-modal:build: ✓ Web peers: react is required, react-native, react-native-gesture-handler, react-native-reanimated, react-native-screens, react-native-worklets are optional
+magic-modal:build: ✓ Packed declarations: web and React Native consumers emit cleanly
+magic-modal:test: cache bypass, force executing 408b49095d720383
+@magic-modal/docs:build: cache miss, executing 2f950bcc476157cd
+react-native-magic-modal:build: cache miss, executing 8f83deb4f88f7322
+@magic-modal/next-web:build: cache miss, executing 76363c583984811a
+magic-modal:test: $ jest
+@magic-modal/next-web:build: $ next build
+react-native-magic-modal:build: $ bunchee && node tools/check-shim-build.mjs
+@magic-modal/docs:build: $ pnpm --workspace-root registry:build && node scripts/copy-og-image.mjs
+@magic-modal/docs:build: $ shadcn build --output apps/docs/public/r && pnpm --filter @magic-modal/docs exec node scripts/format-registry.mjs
+react-native-magic-modal:build: ! Lint: 1 issues found.
+react-native-magic-modal:build: ! "dependencies.magic-modal": "workspace:*" uses the workspace: protocol — publishing without pnpm will ship the literal range. Rewrite it before publishing.
+@magic-modal/next-web:build: ▲ Next.js 16.4.5 (Turbopack)
+@magic-modal/next-web:build: ✓ Running next.config.ts took 62ms
+@magic-modal/next-web:build: 
+@magic-modal/next-web:build:   Creating an optimized production build ...
+@magic-modal/docs:build: - Building magic-modal...
+@magic-modal/docs:build: ✔ Building registry.
+@magic-modal/next-web:build: ✓ Compiled successfully in 402ms
+@magic-modal/next-web:build:   Running TypeScript ...
+magic-modal:test: PASS native src/components/webModal/modal-transitions.test.ts
+magic-modal:test: PASS native src/web-bundle.test.ts
+magic-modal:test: PASS native src/components/webModal/swipe-gesture.test.ts
+@magic-modal/docs:build: og:image copied to /private/tmp/gstj-oss-20261125/magic-modal-8f564d7/apps/docs/public/og.png
+@magic-modal/docs:build: $ next build && node scripts/write-legacy-redirects.mjs && node scripts/check-artifact.mjs
+@magic-modal/docs:build: ▲ Next.js 16.4.5 (Turbopack)
+magic-modal:test: PASS web src/components/magic-modal.browser.web.test.tsx
+magic-modal:test:   ● Console
+magic-modal:test: 
+magic-modal:test:     console.warn
+magic-modal:test:       [DEPRECATED] magic-modal deprecated 'hide' usage:
+magic-modal:test:       Calling magicModal.hide without a modal ID is deprecated and will be removed in future versions.
+magic-modal:test:       Please provide a modal id to hide or use the preferred `useMagicModal` hook inside the modal to hide itself.
+magic-modal:test:       Defaulting to hiding the last modal in the stack.
+magic-modal:test: 
+magic-modal:test:       192 |           if (!modalID) {
+magic-modal:test:       193 |             // eslint-disable-next-line no-console
+magic-modal:test:     > 194 |             console.warn(
+magic-modal:test:           |                     ^
+magic-modal:test:       195 |               "[DEPRECATED] magic-modal deprecated 'hide' usage:\nCalling magicModal.hide without a modal ID is deprecated and will be removed in future versions.\nPlease provide a modal id to hide or use the preferred `useMagicModal` hook inside the modal to hide itself.\nDefaulting to hiding the last modal in the stack.",
+magic-modal:test:       196 |             );
+magic-modal:test:       197 |           } else if (!currentModal) {
+magic-modal:test: 
+magic-modal:test:       at warn (src/components/MagicModalPortal/magic-modal-portal-base.tsx:194:21)
+magic-modal:test:       at basicStateReducer (../../node_modules/react-dom/cjs/react-dom-client.development.js:7935:45)
+magic-modal:test:       at dispatchSetStateInternal (../../node_modules/react-dom/cjs/react-dom-client.development.js:9152:28)
+magic-modal:test:       at dispatchSetState (../../node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+magic-modal:test:       at setModals (src/components/MagicModalPortal/magic-modal-portal-base.tsx:188:9)
+magic-modal:test:       at Object._hide [as hide] (src/components/MagicModalPortal/magic-modal-portal-base.tsx:381:9)
+magic-modal:test:       at Object.hide (src/utils/magic-modal-handler.ts:36:19)
+magic-modal:test:       at hide (src/components/magic-modal.browser.web.test.tsx:283:18)
+magic-modal:test:       at Object.<anonymous>.process.env.NODE_ENV.exports.act (../../node_modules/react/cjs/react.development.js:814:22)
+magic-modal:test:       at Object.<anonymous> (src/components/magic-modal.browser.web.test.tsx:282:14)
+magic-modal:test: 
+react-native-magic-modal:build: Exports           File                           Size
+react-native-magic-modal:build: .                 dist/index.cjs                 340 B
+react-native-magic-modal:build:                   dist/index.js                  29 B
+react-native-magic-modal:build:                   dist/index.d.cts               29 B
+react-native-magic-modal:build:                   dist/index.d.ts                29 B
+react-native-magic-modal:build: . (react-native)  dist/index.react-native.cjs    340 B
+react-native-magic-modal:build:                   dist/index.react-native.js     29 B
+react-native-magic-modal:build:                   dist/index.react-native.d.cts  29 B
+react-native-magic-modal:build:                   dist/index.react-native.d.ts   29 B
+react-native-magic-modal:build: ✓ Shim boundary: every entry forwards to magic-modal
+react-native-magic-modal:test: cache bypass, force executing 07d14899d6a9d08a
+react-native-magic-modal:test: $ node tools/sync-manifest.mjs --check
+react-native-magic-modal:test: ✓ react-native-magic-modal mirrors magic-modal 10.2.1
+@magic-modal/next-web:build:   Finished TypeScript in 995ms ...
+@magic-modal/next-web:build:   Collecting page data using 4 workers ...
+@magic-modal/docs:build: [MDX] generated files in 10.496915999999942ms
+@magic-modal/docs:build: ✓ Running next.config.ts took 377ms
+magic-modal:test: PASS native src/components/panGesture/pan-gesture-surface.test.ts
+@magic-modal/docs:build: 
+magic-modal:test: PASS native src/components/MagicModalPortal/magic-modal-portal.overlay.test.tsx
+@magic-modal/docs:build:   Creating an optimized production build ...
+@magic-modal/next-web:build:   Generating static pages using 4 workers (0/3) ...
+magic-modal:test: PASS native src/components/MagicModalPortal/magic-modal-portal.test.tsx
+magic-modal:test:   ● Console
+magic-modal:test: 
+magic-modal:test:     console.log
+magic-modal:test:       [UPDATE EVENT IGNORED] No modal found with id: PM1RC1795608476065. It might have already been hidden.
+magic-modal:test: 
+magic-modal:test:       at log (src/components/MagicModalPortal/magic-modal-portal-base.tsx:239:21)
+magic-modal:test: 
+@magic-modal/next-web:build: ✓ Generating static pages using 4 workers (3/3) in 239ms
+@magic-modal/next-web:build:   Finalizing page optimization ...
+@magic-modal/next-web:build: 
+@magic-modal/next-web:build: Route (app)
+@magic-modal/next-web:build: ┌ ○ /
+@magic-modal/next-web:build: └ ○ /_not-found
+@magic-modal/next-web:build: 
+@magic-modal/next-web:build: 
+@magic-modal/next-web:build: ○  (Static)  prerendered as static content
+@magic-modal/next-web:build: 
+magic-modal:test: PASS native src/components/magic-modal.swipe.v3.test.tsx
+magic-modal:test: PASS native src/components/magic-modal.swipe.v2.test.tsx
+@magic-modal/docs:build: ✓ Compiled successfully in 1604ms
+@magic-modal/docs:build:   Running TypeScript ...
+magic-modal:test: 
+magic-modal:test: Test Suites: 9 passed, 9 total
+magic-modal:test: Tests:       130 passed, 130 total
+magic-modal:test: Snapshots:   0 total
+magic-modal:test: Time:        3.352 s, estimated 12 s
+magic-modal:test: Ran all test suites in 2 projects.
+@magic-modal/docs:build:   Finished TypeScript in 1179ms ...
+@magic-modal/docs:build:   Collecting page data using 12 workers ...
+@magic-modal/docs:build:   Generating static pages using 12 workers (0/53) ...
+@magic-modal/docs:build:   Generating static pages using 12 workers (13/53) 
+@magic-modal/docs:build:   Generating static pages using 12 workers (26/53) 
+@magic-modal/docs:build:   Generating static pages using 12 workers (39/53) 
+@magic-modal/docs:build: ✓ Generating static pages using 12 workers (53/53) in 647ms
+@magic-modal/docs:build:   Finalizing page optimization ...
+@magic-modal/docs:build: 
+@magic-modal/docs:build: Route (app)
+@magic-modal/docs:build: ┌ ○ /
+@magic-modal/docs:build: ├ ○ /_not-found
+@magic-modal/docs:build: ├ ○ /api/search
+@magic-modal/docs:build: ├   /docs/[[...slug]]
+@magic-modal/docs:build: │ ├ ● /docs/faq
+@magic-modal/docs:build: │ ├ ● /docs/getting-started/first-modal
+@magic-modal/docs:build: │ ├ ● /docs/getting-started/installation
+@magic-modal/docs:build: │ └ ● [+19 more paths]
+@magic-modal/docs:build: ├ ○ /icon.svg
+@magic-modal/docs:build: ├ ○ /llms-full.txt
+@magic-modal/docs:build: ├   /llms.mdx/docs/[[...slug]]
+@magic-modal/docs:build: │ ├ ● /llms.mdx/docs/faq/content.md
+@magic-modal/docs:build: │ ├ ● /llms.mdx/docs/getting-started/first-modal/content.md
+@magic-modal/docs:build: │ ├ ● /llms.mdx/docs/getting-started/installation/content.md
+@magic-modal/docs:build: │ └ ● [+19 more paths]
+@magic-modal/docs:build: ├ ○ /llms.txt
+@magic-modal/docs:build: ├ ○ /robots.txt
+@magic-modal/docs:build: └ ○ /sitemap.xml
+@magic-modal/docs:build: 
+@magic-modal/docs:build: 
+@magic-modal/docs:build: ○  (Static)  prerendered as static content
+@magic-modal/docs:build: ●  (SSG)     prerendered as static HTML (uses generateStaticParams)
+@magic-modal/docs:build: 
+@magic-modal/docs:build: ✓ Docs artifact: 24 required files, 37 HTML files, 828 internal links
+@magic-modal/docs:test: cache bypass, force executing 72a40b368a332ab7
+@magic-modal/docs:test: $ node --test test/*.test.mjs
+@magic-modal/docs:test: ✔ keeps every public TypeDoc route alive (0.292625ms)
+@magic-modal/docs:test: ✔ renders a GitHub Pages-aware redirect without losing the hash (0.445292ms)
+@magic-modal/docs:test: ✔ publishes clean Markdown beside each documentation page (18.517541ms)
+@magic-modal/docs:test: ✔ collects project metadata without rounding or fallback metrics (16.269959ms)
+@magic-modal/docs:test: ✔ keeps known values when one refresh source is unavailable (0.437208ms)
+@magic-modal/docs:test: ✔ uses null when every source fails (0.300083ms)
+@magic-modal/docs:test: ✔ rejects invalid metrics from successful responses (0.66625ms)
+@magic-modal/docs:test: ✔ validates cache payloads before using them (0.143417ms)
+@magic-modal/docs:test: ✔ computes completed years and cache freshness (0.147125ms)
+@magic-modal/docs:test: ℹ tests 9
+@magic-modal/docs:test: ℹ suites 0
+@magic-modal/docs:test: ℹ pass 9
+@magic-modal/docs:test: ℹ fail 0
+@magic-modal/docs:test: ℹ cancelled 0
+@magic-modal/docs:test: ℹ skipped 0
+@magic-modal/docs:test: ℹ todo 0
+@magic-modal/docs:test: ℹ duration_ms 95.048208
+
+ Tasks:    7 successful, 7 total
+Cached:    0 cached, 7 total
+  Time:    9.864s 
+

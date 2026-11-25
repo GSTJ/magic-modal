@@ -1,0 +1,48 @@
+$ turbo run format
+
+   • turbo 2.11.7
+   • Packages in scope: @magic-modal/demo-video, @magic-modal/docs, @magic-modal/next-web, @magic/kitchen-sink, magic-modal, react-native-magic-modal
+   • Running format in 6 packages
+   • Remote caching disabled
+
+@magic-modal/docs:format: cache miss, executing 22f165f1d9028396
+react-native-magic-modal:format: cache miss, executing bb6422e474b172a0
+@magic-modal/next-web:format: cache miss, executing dc0b81533c3a0e47
+@magic/kitchen-sink:format: cache miss, executing c264a1223ecbef42
+@magic-modal/demo-video:format: cache hit, replaying logs 425e7355d88a8ab2
+@magic-modal/demo-video:format: $ oxfmt --check .
+@magic-modal/demo-video:format: Checking formatting...
+@magic-modal/demo-video:format: 
+@magic-modal/demo-video:format: All matched files use the correct format.
+@magic-modal/demo-video:format: Finished in 281ms on 9 files using 18 threads.
+magic-modal:format: cache hit, replaying logs 84f0479d26509b0e
+magic-modal:format: $ oxfmt --check .
+magic-modal:format: Checking formatting...
+magic-modal:format: 
+magic-modal:format: All matched files use the correct format.
+magic-modal:format: Finished in 46ms on 66 files using 18 threads.
+@magic-modal/docs:format: $ oxfmt --check .
+@magic-modal/next-web:format: $ oxfmt --check .
+react-native-magic-modal:format: $ oxfmt --check .
+@magic/kitchen-sink:format: $ oxfmt --check .
+@magic-modal/docs:format: Checking formatting...
+@magic-modal/docs:format: 
+react-native-magic-modal:format: Checking formatting...
+react-native-magic-modal:format: 
+@magic-modal/next-web:format: Checking formatting...
+@magic-modal/next-web:format: 
+@magic/kitchen-sink:format: Checking formatting...
+@magic/kitchen-sink:format: 
+@magic-modal/next-web:format: All matched files use the correct format.
+@magic-modal/next-web:format: Finished in 238ms on 10 files using 18 threads.
+@magic/kitchen-sink:format: All matched files use the correct format.
+@magic/kitchen-sink:format: Finished in 317ms on 28 files using 18 threads.
+react-native-magic-modal:format: All matched files use the correct format.
+react-native-magic-modal:format: Finished in 392ms on 9 files using 18 threads.
+@magic-modal/docs:format: All matched files use the correct format.
+@magic-modal/docs:format: Finished in 553ms on 76 files using 18 threads.
+
+ Tasks:    6 successful, 6 total
+Cached:    2 cached, 6 total
+  Time:    754ms 
+

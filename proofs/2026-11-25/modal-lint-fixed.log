@@ -1,0 +1,44 @@
+$ turbo run lint
+
+   • turbo 2.11.7
+   • Packages in scope: @magic-modal/demo-video, @magic-modal/docs, @magic-modal/next-web, @magic/kitchen-sink, magic-modal, react-native-magic-modal
+   • Running lint in 6 packages
+   • Remote caching disabled
+
+magic-modal:build: cache hit, replaying logs c6d3b3675dd35e2f
+magic-modal:build: $ bunchee && node tools/wrap-entrypoints.mjs && node tools/check-web-build.mjs && node tools/check-pack-consumer.mjs
+magic-modal:build: Exports           File                           Size
+magic-modal:build: .                 dist/index.cjs                 64.7 kB
+magic-modal:build:                   dist/index.js                  63.8 kB
+magic-modal:build:                   dist/index.d.cts               2.95 kB
+magic-modal:build:                   dist/index.d.ts                2.95 kB
+magic-modal:build: . (react-native)  dist/index.react-native.cjs    48.2 kB
+magic-modal:build:                   dist/index.react-native.js     46.5 kB
+magic-modal:build:                   dist/index.react-native.d.cts  2.88 kB
+magic-modal:build:                   dist/index.react-native.d.ts   2.88 kB
+magic-modal:build: ✓ Web package boundary: runtime guard loads first, browser omits react-native, react-native-web, react-native-gesture-handler, react-native-reanimated, react-native-screens, react-native-worklets
+magic-modal:build: ✓ Web bundle: 14.1 KB minified, 5.4 KB gzipped (budget 6.6 KB), identical without the react-native alias
+magic-modal:build: ✓ Web SSR: the portal and its stylesheet render without a DOM
+magic-modal:build: ✓ Web peers: react is required, react-native, react-native-gesture-handler, react-native-reanimated, react-native-screens, react-native-worklets are optional
+magic-modal:build: ✓ Packed declarations: web and React Native consumers emit cleanly
+magic-modal:lint: cache miss, executing 5c52d0556e7c2668
+@magic-modal/docs:lint: cache miss, executing d7e8e432e658374b
+react-native-magic-modal:lint: cache miss, executing 842ef83e86e3c68e
+@magic/kitchen-sink:lint: cache miss, executing 4c48b555b1e7b1a5
+@magic/kitchen-sink:lint: $ oxlint --report-unused-disable-directives
+magic-modal:lint: $ oxlint --report-unused-disable-directives
+@magic-modal/docs:lint: $ oxlint --report-unused-disable-directives
+react-native-magic-modal:lint: $ oxlint --report-unused-disable-directives
+react-native-magic-modal:lint: Found 0 warnings and 0 errors.
+react-native-magic-modal:lint: Finished in 165ms on 6 files with 451 rules using 18 threads.
+@magic/kitchen-sink:lint: Found 0 warnings and 0 errors.
+@magic/kitchen-sink:lint: Finished in 330ms on 15 files with 432 rules using 18 threads.
+magic-modal:lint: Found 0 warnings and 0 errors.
+magic-modal:lint: Finished in 404ms on 63 files with 451 rules using 18 threads.
+@magic-modal/docs:lint: Found 0 warnings and 0 errors.
+@magic-modal/docs:lint: Finished in 412ms on 44 files with 478 rules using 18 threads.
+
+ Tasks:    5 successful, 5 total
+Cached:    1 cached, 5 total
+  Time:    574ms 
+

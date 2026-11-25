@@ -1,6 +1,0 @@
-appId: com.gstj.reactnativemagicmodalexample
----
-- launchApp
-- tapOn: "Test Issue #155 (Navigation Crash)"
-- tapOn: "Navigate Immediately"
-- assertVisible: "Issue #155 Test Page"

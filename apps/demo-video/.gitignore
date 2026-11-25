@@ -1,7 +1,0 @@
-# Remotion writes renders here when you point them at the package instead of
-# ../../media. The committed artefacts live in media/ at the repo root.
-out/
-
-# `remotion bundle` output, and the browser Remotion downloads on first render.
-build/
-.remotion/
