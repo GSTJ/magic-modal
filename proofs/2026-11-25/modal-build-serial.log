@@ -1,0 +1,111 @@
+$ turbo run build
+
+   • turbo 2.11.7
+   • Packages in scope: @magic-modal/demo-video, @magic-modal/docs, @magic-modal/next-web, @magic/kitchen-sink, magic-modal, react-native-magic-modal
+   • Running build in 6 packages
+   • Remote caching disabled
+
+magic-modal:build: cache hit, replaying logs 61b3d3947de110f6
+magic-modal:build: $ bunchee && node tools/wrap-entrypoints.mjs && node tools/check-web-build.mjs && node tools/check-pack-consumer.mjs
+magic-modal:build: Exports           File                           Size
+magic-modal:build: .                 dist/index.cjs                 64.7 kB
+magic-modal:build:                   dist/index.js                  63.8 kB
+magic-modal:build:                   dist/index.d.cts               2.95 kB
+magic-modal:build:                   dist/index.d.ts                2.95 kB
+magic-modal:build: . (react-native)  dist/index.react-native.cjs    48.2 kB
+magic-modal:build:                   dist/index.react-native.js     46.5 kB
+magic-modal:build:                   dist/index.react-native.d.cts  2.88 kB
+magic-modal:build:                   dist/index.react-native.d.ts   2.88 kB
+magic-modal:build: ✓ Web package boundary: runtime guard loads first, browser omits react-native, react-native-web, react-native-gesture-handler, react-native-reanimated, react-native-screens, react-native-worklets
+magic-modal:build: ✓ Web bundle: 14.1 KB minified, 5.4 KB gzipped (budget 6.6 KB), identical without the react-native alias
+magic-modal:build: ✓ Web SSR: the portal and its stylesheet render without a DOM
+magic-modal:build: ✓ Web peers: react is required, react-native, react-native-gesture-handler, react-native-reanimated, react-native-screens, react-native-worklets are optional
+magic-modal:build: ✓ Packed declarations: web and React Native consumers emit cleanly
+@magic-modal/docs:build: cache miss, executing 950b340b318f0e72
+react-native-magic-modal:build: cache miss, executing ac2a662301ba0faa
+@magic-modal/next-web:build: cache miss, executing ac1b466bf52587f4
+react-native-magic-modal:build: $ bunchee && node tools/check-shim-build.mjs
+@magic-modal/docs:build: $ pnpm --workspace-root registry:build && node scripts/copy-og-image.mjs
+@magic-modal/next-web:build: $ next build
+@magic-modal/docs:build: $ shadcn build --output apps/docs/public/r && pnpm --filter @magic-modal/docs exec node scripts/format-registry.mjs
+react-native-magic-modal:build: ! Lint: 1 issues found.
+react-native-magic-modal:build: ! "dependencies.magic-modal": "workspace:*" uses the workspace: protocol — publishing without pnpm will ship the literal range. Rewrite it before publishing.
+@magic-modal/next-web:build: ▲ Next.js 16.4.5 (Turbopack)
+@magic-modal/next-web:build: ✓ Running next.config.ts took 17ms
+@magic-modal/next-web:build: 
+@magic-modal/next-web:build:   Creating an optimized production build ...
+@magic-modal/docs:build: - Building magic-modal...
+@magic-modal/docs:build: ✔ Building registry.
+@magic-modal/docs:build: og:image copied to /private/tmp/gstj-oss-20261125/magic-modal-8f564d7/apps/docs/public/og.png
+@magic-modal/docs:build: $ next build && node scripts/write-legacy-redirects.mjs && node scripts/check-artifact.mjs
+react-native-magic-modal:build: Exports           File                           Size
+react-native-magic-modal:build: .                 dist/index.cjs                 340 B
+react-native-magic-modal:build:                   dist/index.js                  29 B
+react-native-magic-modal:build:                   dist/index.d.cts               29 B
+react-native-magic-modal:build:                   dist/index.d.ts                29 B
+react-native-magic-modal:build: . (react-native)  dist/index.react-native.cjs    340 B
+react-native-magic-modal:build:                   dist/index.react-native.js     29 B
+react-native-magic-modal:build:                   dist/index.react-native.d.cts  29 B
+react-native-magic-modal:build:                   dist/index.react-native.d.ts   29 B
+react-native-magic-modal:build: ✓ Shim boundary: every entry forwards to magic-modal
+@magic-modal/next-web:build: ✓ Compiled successfully in 1224ms
+@magic-modal/next-web:build:   Running TypeScript ...
+@magic-modal/docs:build: ▲ Next.js 16.4.5 (Turbopack)
+@magic-modal/docs:build: [MDX] generated files in 12.546625000000006ms
+@magic-modal/docs:build: ✓ Running next.config.ts took 178ms
+@magic-modal/docs:build: 
+@magic-modal/docs:build:   Creating an optimized production build ...
+@magic-modal/next-web:build:   Finished TypeScript in 1062ms ...
+@magic-modal/next-web:build:   Collecting page data using 4 workers ...
+@magic-modal/next-web:build:   Generating static pages using 4 workers (0/3) ...
+@magic-modal/next-web:build: ✓ Generating static pages using 4 workers (3/3) in 893ms
+@magic-modal/next-web:build:   Finalizing page optimization ...
+@magic-modal/next-web:build: 
+@magic-modal/next-web:build: Route (app)
+@magic-modal/next-web:build: ┌ ○ /
+@magic-modal/next-web:build: └ ○ /_not-found
+@magic-modal/next-web:build: 
+@magic-modal/next-web:build: 
+@magic-modal/next-web:build: ○  (Static)  prerendered as static content
+@magic-modal/next-web:build: 
+@magic-modal/docs:build: ✓ Compiled successfully in 4.9s
+@magic-modal/docs:build:   Running TypeScript ...
+@magic-modal/docs:build:   Finished TypeScript in 1918ms ...
+@magic-modal/docs:build:   Collecting page data using 12 workers ...
+@magic-modal/docs:build:   Generating static pages using 12 workers (0/53) ...
+@magic-modal/docs:build:   Generating static pages using 12 workers (13/53) 
+@magic-modal/docs:build:   Generating static pages using 12 workers (26/53) 
+@magic-modal/docs:build:   Generating static pages using 12 workers (39/53) 
+@magic-modal/docs:build: ✓ Generating static pages using 12 workers (53/53) in 728ms
+@magic-modal/docs:build:   Finalizing page optimization ...
+@magic-modal/docs:build: 
+@magic-modal/docs:build: Route (app)
+@magic-modal/docs:build: ┌ ○ /
+@magic-modal/docs:build: ├ ○ /_not-found
+@magic-modal/docs:build: ├ ○ /api/search
+@magic-modal/docs:build: ├   /docs/[[...slug]]
+@magic-modal/docs:build: │ ├ ● /docs/faq
+@magic-modal/docs:build: │ ├ ● /docs/getting-started/first-modal
+@magic-modal/docs:build: │ ├ ● /docs/getting-started/installation
+@magic-modal/docs:build: │ └ ● [+19 more paths]
+@magic-modal/docs:build: ├ ○ /icon.svg
+@magic-modal/docs:build: ├ ○ /llms-full.txt
+@magic-modal/docs:build: ├   /llms.mdx/docs/[[...slug]]
+@magic-modal/docs:build: │ ├ ● /llms.mdx/docs/faq/content.md
+@magic-modal/docs:build: │ ├ ● /llms.mdx/docs/getting-started/first-modal/content.md
+@magic-modal/docs:build: │ ├ ● /llms.mdx/docs/getting-started/installation/content.md
+@magic-modal/docs:build: │ └ ● [+19 more paths]
+@magic-modal/docs:build: ├ ○ /llms.txt
+@magic-modal/docs:build: ├ ○ /robots.txt
+@magic-modal/docs:build: └ ○ /sitemap.xml
+@magic-modal/docs:build: 
+@magic-modal/docs:build: 
+@magic-modal/docs:build: ○  (Static)  prerendered as static content
+@magic-modal/docs:build: ●  (SSG)     prerendered as static HTML (uses generateStaticParams)
+@magic-modal/docs:build: 
+@magic-modal/docs:build: ✓ Docs artifact: 24 required files, 37 HTML files, 828 internal links
+
+ Tasks:    4 successful, 4 total
+Cached:    1 cached, 4 total
+  Time:    10.64s 
+

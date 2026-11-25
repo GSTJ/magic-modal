@@ -1,0 +1,44 @@
+$ turbo run typecheck
+
+   • turbo 2.11.7
+   • Packages in scope: @magic-modal/demo-video, @magic-modal/docs, @magic-modal/next-web, @magic/kitchen-sink, magic-modal, react-native-magic-modal
+   • Running typecheck in 6 packages
+   • Remote caching disabled
+
+magic-modal:typecheck: cache miss, executing 25b432232fc67605
+magic-modal:build: cache hit, replaying logs 61b3d3947de110f6
+magic-modal:build: $ bunchee && node tools/wrap-entrypoints.mjs && node tools/check-web-build.mjs && node tools/check-pack-consumer.mjs
+magic-modal:build: Exports           File                           Size
+magic-modal:build: .                 dist/index.cjs                 64.7 kB
+magic-modal:build:                   dist/index.js                  63.8 kB
+magic-modal:build:                   dist/index.d.cts               2.95 kB
+magic-modal:build:                   dist/index.d.ts                2.95 kB
+magic-modal:build: . (react-native)  dist/index.react-native.cjs    48.2 kB
+magic-modal:build:                   dist/index.react-native.js     46.5 kB
+magic-modal:build:                   dist/index.react-native.d.cts  2.88 kB
+magic-modal:build:                   dist/index.react-native.d.ts   2.88 kB
+magic-modal:build: ✓ Web package boundary: runtime guard loads first, browser omits react-native, react-native-web, react-native-gesture-handler, react-native-reanimated, react-native-screens, react-native-worklets
+magic-modal:build: ✓ Web bundle: 14.1 KB minified, 5.4 KB gzipped (budget 6.6 KB), identical without the react-native alias
+magic-modal:build: ✓ Web SSR: the portal and its stylesheet render without a DOM
+magic-modal:build: ✓ Web peers: react is required, react-native, react-native-gesture-handler, react-native-reanimated, react-native-screens, react-native-worklets are optional
+magic-modal:build: ✓ Packed declarations: web and React Native consumers emit cleanly
+@magic/kitchen-sink:typecheck: cache miss, executing dd23c758e189a02c
+@magic-modal/docs:typecheck: cache miss, executing b0e1360566a0b214
+react-native-magic-modal:typecheck: cache miss, executing bbe4e055072833b4
+@magic-modal/next-web:typecheck: cache miss, executing 97f9a5a33e165fb5
+magic-modal:typecheck: $ tsc --noEmit --emitDeclarationOnly false
+@magic/kitchen-sink:typecheck: $ tsc --noEmit --emitDeclarationOnly false
+react-native-magic-modal:typecheck: $ tsc --noEmit --emitDeclarationOnly false
+@magic-modal/docs:typecheck: $ pnpm --workspace-root registry:typecheck && fumadocs-mdx && next typegen && fumadocs-mdx && tsc --noEmit
+@magic-modal/next-web:typecheck: $ tsc --noEmit
+@magic-modal/docs:typecheck: $ pnpm --filter magic-modal exec tsc --project ../../registry/tsconfig.json
+@magic-modal/docs:typecheck: [MDX] generated files in 7.861082999999979ms
+@magic-modal/docs:typecheck: [MDX] generated files in 5.887750000000096ms
+@magic-modal/docs:typecheck: Generating route types...
+@magic-modal/docs:typecheck: ✓ Types generated successfully
+@magic-modal/docs:typecheck: [MDX] generated files in 5.6834169999999915ms
+
+ Tasks:    6 successful, 6 total
+Cached:    1 cached, 6 total
+  Time:    4.622s 
+

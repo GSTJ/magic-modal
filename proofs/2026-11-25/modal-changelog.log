@@ -1,0 +1,17 @@
+$ turbo run changelog:check --filter=magic-modal
+
+   • turbo 2.11.7
+   • Packages in scope: magic-modal
+   • Running changelog:check in 1 package
+   • Remote caching disabled
+
+magic-modal:changelog:check: cache bypass, force executing e66f8ef5356826d3
+magic-modal:changelog:check: $ node tools/changelog-check.mjs
+magic-modal:changelog:check: changelog preset check passed (12 synthetic commits, 3 breaking; bumps: feat!=major, feat=minor, fix=patch, changelog-only=null, hidden-only=null)
+magic-modal:changelog:check: note pattern check passed (prose=minor, footer=major, hyphen-footer=major, marker=major, lowercase=minor, indented=minor, bulleted=minor; control: bulleted footer under upstream defaults=major)
+magic-modal:changelog:check: negative control passed (hiding the visible types breaks 6 assertions: feat renders, fix renders, build renders, refactor renders, chore renders, docs renders)
+
+ Tasks:    1 successful, 1 total
+Cached:    0 cached, 1 total
+  Time:    18.41s 
+

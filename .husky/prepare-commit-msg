@@ -1,4 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-(git rev-parse -q --verify MERGE_HEAD) || (exec < /dev/tty && git cz --hook || true)
