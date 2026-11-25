@@ -205,7 +205,7 @@ https://www.contributor-covenant.org/faq. Translations are available at https://
 
 Picomatch 2.3.2 and 4.0.7 have no published fix for GHSA-fc5q-39xc-vjpf.
 The local patches use the parser's literal fallback for repeated wildcard
-operands and nested grammar without a proven safe reduction. This intentionally
+operands and raw plus quantifiers and nested grammar without a proven safe reduction. This intentionally
 narrows repeated extglob support in development tooling: unproved nested groups
 and alternatives with overlapping initial characters now match literally.
 Flat literal alternatives with disjoint initials under the active case matching

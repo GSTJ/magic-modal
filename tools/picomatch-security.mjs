@@ -5,8 +5,8 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const hashes = {
-  "2.3.2": "1df207ee85c86d2d31c2c01bfedca42c6c659a72605b9666d055e00c52928aa5",
-  "4.0.7": "1d0befdfdd8c7fe8e2a3c4fb7f0bfe74e8f8724bb4c122cbd9e3471f8fab3a3f",
+  "2.3.2": "525e656a3b61ad34dbd82d5574071e2d93d67006d78b6f23e50eaeb8cd1c9e99",
+  "4.0.7": "d7d6e2cbe0fd073e8a3849368f95139752cecd13bc7b8f3689eb369901a3b7c8",
 };
 
 // Check the installed bytes as well as the public matcher. Each adversarial
@@ -25,7 +25,7 @@ export function verifyPicomatch(entry, version) {
       "-e",
       `const p = require(${JSON.stringify(entry)});
        const a = require('node:assert/strict');
-       for (const glob of ['+(*)', '+(*a)', '*(*)', '*(*a)', '+(?*)']) {
+       for (const glob of ['+(*)', '+(*a)', '*(*)', '*(*a)', '+(?*)', '+(a+)', '*(a+)', '+(a+b)']) {
          const match = p(glob + 'b');
          a.equal(match('a'.repeat(48) + 'c'), false);
          a.equal(match(glob + 'b'), true);
@@ -46,7 +46,7 @@ export function verifyPicomatch(entry, version) {
          ['+([[:alpha:]*])', 'a*a'],
        ]) a.equal(p(glob)(input), true, glob);
        const patterns = new Set();
-       for (const body of ['*', '*a', 'a*', '?*', 'a?', '*(a)', '+(a)', '?(a)', '@(a)', '!(a)', '[a*]', '[ab]']) {
+       for (const body of ['*', '*a', 'a*', '?*', 'a+', 'a+b', 'a?', '*(a)', '+(a)', '?(a)', '@(a)', '!(a)', '[a*]', '[ab]']) {
          for (const outer of ['+', '*']) {
            patterns.add(outer + '(' + body + ')b');
            for (const inner of ['@', '+', '*', '?', '!']) patterns.add(outer + '(' + inner + '(' + body + '))b');

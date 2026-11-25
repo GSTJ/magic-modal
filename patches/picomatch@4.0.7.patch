@@ -25,7 +25,7 @@ index 29207512c60183b4bb9bf5112be3b9b5f4a9a9fd..235ac3fda32a2aef370cffc733c7e346
 +    if (ch === '[') { bracket = true; continue; }
 +    if (ch === ']') { bracket = false; continue; }
 +    if (!bracket && (ch === '(' || ch === '{')) nested = true;
-+    if (!bracket && ch === '*' && body[index + 1] !== '(') {
++    if (!bracket && (ch === '*' || ch === '+') && body[index + 1] !== '(') {
 +      return { risky: true };
 +    }
 +  }
